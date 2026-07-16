@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { Analytics } from "@/components/Analytics";
 import { ConsentBanner } from "@/components/consent/ConsentBanner";
@@ -54,6 +55,8 @@ export default function RootLayout({
               attributes, not its children. */}
           <body suppressHydrationWarning>
             {children}
+            {/* Real-user Core Web Vitals (cookieless, privacy-friendly). */}
+            <SpeedInsights />
             {/* GA4 loads only after analytics consent (see cookie banner). */}
             <Analytics gaId={GA_ID} />
             <ConsentBanner />

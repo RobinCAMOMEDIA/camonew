@@ -448,6 +448,23 @@ export default function DatenschutzPage() {
             .
           </p>
 
+          <h3 className="legal-h3">Vercel Speed Insights</h3>
+          <p>
+            Zur Messung der Ladeperformance (Core Web Vitals) nutzen wir Vercel
+            Speed Insights, einen Dienst der Vercel Inc., USA. Dabei werden
+            anonymisierte technische Kennzahlen zur Seitengeschwindigkeit erfasst
+            (z. B. Ladezeiten, Gerätetyp, ungefähre Region). Der Dienst arbeitet{" "}
+            <strong>cookielos</strong> und erstellt keine Nutzerprofile; es werden
+            keine personenbezogenen Profile gebildet. Die Nutzung erfolgt auf
+            Grundlage von Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an
+            einer schnellen, technisch fehlerfreien Website). Weitere
+            Informationen:{" "}
+            <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noreferrer">
+              https://vercel.com/legal/privacy-policy
+            </a>
+            .
+          </p>
+
           {/* 6 */}
           <h2 className="legal-h2">6. Plugins und Tools</h2>
 
