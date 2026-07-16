@@ -104,7 +104,7 @@ export function Nav() {
               <InstagramIcon />
             </a>
             <a
-              href="https://linkedin.com/company/camo-media"
+              href="https://www.linkedin.com/company/camomedia/"
               className="nav__social-link"
               target="_blank"
               rel="noopener"

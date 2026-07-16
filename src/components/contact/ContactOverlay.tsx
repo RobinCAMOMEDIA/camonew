@@ -144,9 +144,9 @@ function ContactOverlay({
                 <span className="contact-overlay__channel-label">Mail</span>
                 hello@camo.media
               </a>
-              <a href="tel:+4940123456" className="contact-overlay__channel">
+              <a href="tel:+494022854474" className="contact-overlay__channel">
                 <span className="contact-overlay__channel-label">Phone</span>
-                +49 40 123 456
+                040 – 22854474
               </a>
               <span className="contact-overlay__channel">
                 <span className="contact-overlay__channel-label">Studio</span>

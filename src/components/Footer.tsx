@@ -100,8 +100,8 @@ export function Footer() {
             <a href="mailto:hello@camo.media" className="footer__col-link">
               hello@camo.media
             </a>
-            <a href="tel:+4940123456" className="footer__col-link">
-              +49 40 123 456
+            <a href="tel:+494022854474" className="footer__col-link">
+              040 – 22854474
             </a>
             <span className="footer__col-link">Hamburg, Deutschland</span>
           </div>
@@ -131,7 +131,7 @@ export function Footer() {
               <InstagramIcon />
             </a>
             <a
-              href="https://linkedin.com/company/camo-media"
+              href="https://www.linkedin.com/company/camomedia/"
               className="footer__social-link"
               aria-label="LinkedIn"
               target="_blank"

@@ -26,7 +26,7 @@ export function ContactCTA({
               <span className="btn__arrow">→</span>
             </a>
             {showPhone && (
-              <a href="tel:+4940123456" className="btn btn--ghost">
+              <a href="tel:+494022854474" className="btn btn--ghost">
                 Anrufen
               </a>
             )}
