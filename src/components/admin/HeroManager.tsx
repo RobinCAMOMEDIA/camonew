@@ -91,6 +91,8 @@ export function HeroManager() {
     setError("");
     setSaving(true);
     try {
+      // MediaRef.storageId is a plain string (storage-agnostic); the Convex
+      // validator expects the branded Id<"_storage">. Assert at this boundary.
       await updateHero({
         heroSubtitle: subtitle.trim() || undefined,
         heroColumns: columns.map((col) => ({
@@ -100,7 +102,7 @@ export function HeroManager() {
             type: s.type.trim(),
           })),
         })),
-      });
+      } as Parameters<typeof updateHero>[0]);
       setSaved(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Speichern fehlgeschlagen.");

@@ -142,10 +142,16 @@ export function CaseForm({ initial }: { initial?: PublicCase }) {
 
     setSaving(true);
     try {
+      // MediaRef stores storageId as a plain (storage-agnostic) string; the
+      // Convex validators expect the branded Id<"_storage">. The values are
+      // valid storage ids at runtime, so we assert the type at this boundary.
       if (isEdit && initial) {
-        await update({ id: initial._id as Id<"cases">, ...args });
+        await update({
+          id: initial._id as Id<"cases">,
+          ...args,
+        } as Parameters<typeof update>[0]);
       } else {
-        await create(args);
+        await create(args as Parameters<typeof create>[0]);
       }
       router.push("/admin/cases");
       router.refresh();

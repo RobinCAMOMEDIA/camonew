@@ -19,7 +19,7 @@ export interface MediaRef {
 }
 
 // Resolved on read (storageId -> url). Used by the public site & previews.
-export interface ResolvedMediaRef extends MediaRef {
+export interface ResolvedMediaRef extends Omit<MediaRef, "url"> {
   url: string | null;
 }
 
