@@ -19,6 +19,16 @@ export default clerkMiddleware(async (auth, req) => {
       return NextResponse.redirect(signInUrl);
     }
   }
+
+  // Keep the temporary *.vercel.app URLs out of Google (avoids duplicate
+  // content vs. the real domain). This auto-lifts once the site is served from
+  // the real custom domain (which does not end in ".vercel.app").
+  const host = req.headers.get("host") ?? "";
+  if (host.endsWith(".vercel.app")) {
+    const res = NextResponse.next();
+    res.headers.set("X-Robots-Tag", "noindex, nofollow");
+    return res;
+  }
 });
 
 export const config = {
