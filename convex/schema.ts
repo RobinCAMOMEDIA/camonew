@@ -120,6 +120,17 @@ export default defineSchema({
   // only uses the subset relevant to it.
   siteContent: defineTable({
     key: v.string(), // singleton discriminator: "hero" | "categories" | "notifications"
+    // Hero (key="hero"): the single full-bleed showreel video at the top of the
+    // home page (current design). Falls back to /assets/videos/showreel.mp4.
+    heroShowreel: v.optional(mediaRefValidator),
+    // Hero (key="hero"): full-bleed video wall. Each "slot" is one column of the
+    // wall and cross-fades through its list of videos. Fixed headline in design,
+    // so no titles/labels/subtitle.
+    heroSlots: v.optional(
+      v.array(v.object({ videos: v.array(mediaRefValidator) })),
+    ),
+    // Legacy hero fields (old grid). Kept optional for back-compat with existing
+    // rows; no longer used by the site.
     heroSubtitle: v.optional(v.string()),
     heroColumns: v.optional(v.array(heroColumnValidator)),
     // Case categories shown in the admin dropdown and the public filter bar.

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import "../legal.css";
 
 export const metadata: Metadata = {
-  title: "Datenschutzerklärung – CAMO Media | Hamburg",
+  title: "Datenschutzerklärung | CAMO Media Hamburg",
   description:
     "Datenschutzerklärung der CAMO Media: Welche Daten wir erheben, wie wir sie verwenden und welche Rechte Sie haben.",
 };
@@ -10,14 +11,13 @@ export default function DatenschutzPage() {
   return (
     <main className="legal-page">
       <header className="legal-hero">
-        <span className="legal-hero__subtitle">Rechtliche Hinweise</span>
-        <h1 className="legal-hero__title">
-          Datenschutz<span className="square-dot" />
+        <h1 className="x-h2">
+          <span className="x-nowrap">Datenschutz<span className="x-dot" aria-hidden="true" /></span>
         </h1>
       </header>
 
       <section className="legal-body">
-        <div className="container legal-content">
+        <div className="legal-content">
           {/* 1 */}
           <h2 className="legal-h2">1. Datenschutz auf einen Blick</h2>
 
@@ -151,12 +151,12 @@ export default function DatenschutzPage() {
             <br />
             Inhaber: Ufuk Karatag
             <br />
-            Ruckteschellweg 8a
+            Wrangelstraße 100
             <br />
-            22089 Hamburg
+            20253 Eimsbüttel
           </p>
           <p>
-            Telefon: <a href="tel:+494022854474">+49 (0) 40 – 22854474</a>
+            Telefon: <a href="tel:+494022854474">+49 (0) 40 22854474</a>
             <br />
             E-Mail: <a href="mailto:hello@camo-media.de">hello@camo-media.de</a>
           </p>
@@ -215,8 +215,8 @@ export default function DatenschutzPage() {
             Einsatz von Auftragsverarbeitern geben wir personenbezogene Daten
             unserer Kunden nur auf Grundlage eines gültigen Vertrags über
             Auftragsverarbeitung weiter. Einige unserer Dienstleister haben ihren
-            Sitz in den USA; Übermittlungen dorthin werden – soweit kein
-            Angemessenheitsbeschluss greift – auf die Standardvertragsklauseln der
+            Sitz in den USA; Übermittlungen dorthin werden, soweit kein
+            Angemessenheitsbeschluss greift, auf die Standardvertragsklauseln der
             EU-Kommission bzw. eine Zertifizierung nach dem EU-US Data Privacy
             Framework (DPF) gestützt.
           </p>
@@ -292,7 +292,7 @@ export default function DatenschutzPage() {
             an uns wenden. Das Recht auf Einschränkung der Verarbeitung besteht in
             den gesetzlich vorgesehenen Fällen (Art. 18 DSGVO). Wenn Sie die
             Verarbeitung Ihrer personenbezogenen Daten eingeschränkt haben, dürfen
-            diese Daten – von ihrer Speicherung abgesehen – nur mit Ihrer
+            diese Daten (von ihrer Speicherung abgesehen) nur mit Ihrer
             Einwilligung oder zur Geltendmachung, Ausübung oder Verteidigung von
             Rechtsansprüchen oder zum Schutz der Rechte einer anderen natürlichen
             oder juristischen Person oder aus Gründen eines wichtigen öffentlichen
@@ -364,8 +364,8 @@ export default function DatenschutzPage() {
             Daten verbleiben bei uns, bis Sie uns zur Löschung auffordern, Ihre
             Einwilligung zur Speicherung widerrufen oder der Zweck für die
             Datenspeicherung entfällt (z. B. nach abgeschlossener Bearbeitung
-            Ihrer Anfrage). Zwingende gesetzliche Bestimmungen – insbesondere
-            Aufbewahrungsfristen – bleiben unberührt.
+            Ihrer Anfrage). Zwingende gesetzliche Bestimmungen, insbesondere
+            Aufbewahrungsfristen, bleiben unberührt.
           </p>
 
           <h3 className="legal-h3">Anfrage per E-Mail oder Telefon</h3>
@@ -392,8 +392,8 @@ export default function DatenschutzPage() {
             Datenbank von Convex gespeichert und dort für uns zur Bearbeitung
             bereitgehalten. Die Nutzung erfolgt auf Grundlage von Art. 6 Abs. 1
             lit. f DSGVO (berechtigtes Interesse an einem sicheren und effizienten
-            Betrieb unserer Website) bzw. – soweit die Daten der Vertragsanbahnung
-            dienen – auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO. Die
+            Betrieb unserer Website) bzw., soweit die Daten der Vertragsanbahnung
+            dienen, auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO. Die
             Datenübertragung in die USA wird auf die Standardvertragsklauseln der
             EU-Kommission gestützt. Mit dem Anbieter besteht bzw. wird ein Vertrag
             zur Auftragsverarbeitung geschlossen. Weitere Informationen:{" "}
@@ -427,7 +427,7 @@ export default function DatenschutzPage() {
 
           <h3 className="legal-h3">Google Analytics 4</h3>
           <p>
-            Diese Website nutzt – sofern Sie eingewilligt haben – Funktionen des
+            Diese Website nutzt, sofern Sie eingewilligt haben, Funktionen des
             Webanalysedienstes Google Analytics. Anbieter ist die Google Ireland
             Limited („Google“), Gordon House, Barrow Street, Dublin 4, Irland.
             Google Analytics ermöglicht es uns, das Verhalten der

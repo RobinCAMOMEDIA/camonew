@@ -1,0 +1,587 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   HOME v5 — one continuous, type-led flow instead of boxed sections:
+   hero (video → dot) · drift lines · statement · case index · disciplines ·
+   clients · sentence contact. Shared tokens/chrome live in site.css.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.xhome {
+  background: var(--x-ink);
+  color: var(--x-paper);
+  font-family: var(--x-body);
+  overflow-x: clip;
+}
+/* Accent words: same brand grotesk, just orange (no serif). */
+.xhome em {
+  font-style: normal;
+  color: var(--x-orange);
+}
+
+/* ── Hero: video → dot ─────────────────────────────────────────────────── */
+.xh {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  background: var(--x-ink);
+}
+.xh.is-live {
+  /* shorter pin → "About us" follows right after the claim */
+  height: 200vh;
+}
+.xh__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+.xh__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* contracts into a centred square (the CAMO dot) while scrolling */
+  clip-path: inset(var(--xh-iy, 0px) var(--xh-ix, 0px));
+  will-change: clip-path;
+}
+.xh__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(11, 10, 9, 0.45) 0%,
+    rgba(11, 10, 9, 0) 26%,
+    rgba(11, 10, 9, 0) 48%,
+    rgba(11, 10, 9, 0.8) 100%
+  );
+  opacity: var(--xh-title, 1);
+}
+.xh__title {
+  position: absolute;
+  left: var(--x-gutter);
+  bottom: clamp(18px, 4vh, 44px);
+  margin: 0;
+  font-weight: 900;
+  font-size: clamp(2.1rem, 5vw, 5.4rem);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--x-paper);
+  opacity: var(--xh-title, 1);
+  transform: translateY(calc((1 - var(--xh-title, 1)) * -70px));
+}
+.xh__line {
+  display: block;
+  overflow: hidden;
+  /* room for descenders (g, y) inside the reveal mask, spacing unchanged */
+  padding-bottom: 0.2em;
+  margin-bottom: -0.21em;
+}
+.xh__line > span {
+  display: inline-block;
+  animation: xh-rise 0.9s var(--x-ease)
+    calc(var(--intro-delay) + var(--i) * 90ms) both;
+}
+@keyframes xh-rise {
+  from {
+    transform: translateY(108%);
+  }
+}
+
+/* Ring of text around the dot + the claim either side of it */
+.xh__ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--xh-rend, 120px) * 2.75);
+  height: calc(var(--xh-rend, 120px) * 2.75);
+  margin: calc(var(--xh-rend, 120px) * -1.375) 0 0
+    calc(var(--xh-rend, 120px) * -1.375);
+  overflow: visible;
+  opacity: var(--xh-t, 0);
+  pointer-events: none;
+}
+.xh__ring text {
+  font-family: var(--x-mono);
+  font-size: 8.4px;
+  letter-spacing: 0.08em;
+  fill: var(--x-paper);
+}
+.xh__side {
+  position: absolute;
+  top: 50%;
+  margin: 0;
+  font-size: clamp(1.2rem, 2.3vw, 3rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  opacity: var(--xh-t, 0);
+  pointer-events: none;
+}
+.xh__side--l {
+  right: calc(50% + var(--xh-rend, 120px) * 1.55);
+  text-align: right;
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  text-transform: uppercase;
+  transform: translate(calc((1 - var(--xh-t, 0)) * -60px), -50%);
+}
+.xh__side--r {
+  left: calc(50% + var(--xh-rend, 120px) * 1.55);
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--x-orange);
+  transform: translate(calc((1 - var(--xh-t, 0)) * 60px), -50%);
+}
+
+/* ── About: centred title + mono paragraph ───────────────────────────── */
+.xa {
+  /* Its own screen, like the claim above it: one section in view at a time. */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: var(--x-sp-section) var(--x-gutter);
+  text-align: center;
+}
+.xa__title {
+  margin-bottom: clamp(24px, 2.6vw, 36px);
+}
+.xa__text {
+  max-width: 34ch;
+  margin: 0;
+  font-size: var(--x-fs-lead-lg);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--x-paper);
+}
+.xa .x-more {
+  margin-top: clamp(36px, 3.6vw, 52px);
+}
+
+/* ── Clients marquee ─────────────────────────────────────────────────── */
+/* Inside the orange close, ink logos at its foot */
+/* ── Clients marquee ─────────────────────────────────────────────────── */
+/* A quiet line of paper logos along the foot of the About screen */
+.xl--foot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(28px, 4vh, 48px);
+}
+.xl--foot .xl__track img {
+  --k: clamp(30px, 3vw, 44px);
+  opacity: 0.9;
+}
+.xl__marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.xl__track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: xl-scroll 32s linear infinite;
+}
+/* Same visual weight for every logo: width = k · √(aspect ratio). */
+.xl__track img {
+  --k: clamp(40px, 4.1vw, 58px);
+  width: calc(var(--k) * var(--s, 1.7));
+  height: auto;
+  margin-right: clamp(48px, 5.5vw, 96px);
+  filter: brightness(0) invert(1);
+}
+@keyframes xl-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ── Cases: two large frames per row, right column stepped down ───────── */
+.xc {
+  padding: clamp(60px, 7vw, 110px) var(--x-gutter) 0;
+}
+.xc__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px 40px;
+  margin-bottom: var(--x-sp-head);
+}
+.xc__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(20px, 2.4vw, 40px);
+  row-gap: clamp(56px, 7vw, 110px);
+  padding-bottom: clamp(48px, 9vw, 150px);
+}
+.xc__card:nth-child(even) {
+  translate: 0 clamp(48px, 9vw, 150px);
+}
+.xc__link {
+  display: block;
+  color: var(--x-paper);
+}
+.xc__link:focus-visible {
+  outline: 2px solid var(--x-orange);
+  outline-offset: 6px;
+}
+.xc__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--x-ink-2);
+}
+.xc__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale 0.9s var(--x-ease);
+}
+.xc__link:hover .xc__media img {
+  scale: 1.04;
+}
+.xc__ph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--x-orange);
+  color: var(--x-ink);
+  font-weight: 900;
+  font-size: var(--x-fs-h2);
+  text-transform: uppercase;
+  text-align: center;
+}
+.xc__arrow {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  background: var(--x-orange);
+  color: var(--x-ink);
+  scale: 0;
+  transform-origin: 100% 100%;
+  transition: scale 0.5s var(--x-ease);
+}
+.xc__link:hover .xc__arrow,
+.xc__link:focus-visible .xc__arrow {
+  scale: 1;
+}
+.xc__client {
+  margin-top: 22px;
+  font-weight: 800;
+  font-size: var(--x-fs-title);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+.xc__link:hover .xc__client {
+  color: var(--x-orange);
+}
+.xc__title {
+  max-width: 46ch;
+  margin-top: 10px;
+  font-size: var(--x-fs-lead);
+  font-weight: 500;
+  line-height: 1.45;
+}
+.xc__empty {
+  font-size: var(--x-fs-lead-lg);
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .xc__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .xc__card:nth-child(even) {
+    translate: none;
+  }
+  .xc__arrow {
+    scale: 1;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ── Mobile tweaks ────────────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .xh__side--l,
+  .xh__side--r {
+    left: 0;
+    right: 0;
+    text-align: center;
+    transform: none;
+  }
+  .xh__side--l {
+    top: auto;
+    bottom: calc(50% + var(--xh-rend, 120px) * 1.5);
+  }
+  .xh__side--r {
+    top: calc(50% + var(--xh-rend, 120px) * 1.45);
+  }
+  .xh__title {
+    bottom: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xh__line > span,
+  .xl__track {
+    animation: none !important;
+  }
+}
+
+
+/* ── Home story: pinned About with travelling footage ────────────────── */
+.hs {
+  position: relative;
+  height: 480vh;
+  background: var(--x-ink);
+}
+.hs__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  perspective: 900px;
+  perspective-origin: 50% 50%;
+}
+.hs__frames {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transform-style: preserve-3d;
+}
+.hs__frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(200px, 25vw, 420px);
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  overflow: hidden;
+  background: var(--x-ink-2);
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+}
+.hs__frame--1 {
+  aspect-ratio: 3 / 4;
+  width: clamp(160px, 18vw, 300px);
+}
+.hs__frame--2 {
+  aspect-ratio: 16 / 9;
+  width: clamp(220px, 29vw, 480px);
+}
+.hs__frame img,
+.hs__frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* About text: settles in the centre, above the frames. */
+.hs__text {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(22px, 2.6vw, 36px);
+  padding: 0 var(--x-gutter);
+  text-align: center;
+  /* never semi-transparent (no grey text); it only settles into place */
+  transform: translateY(calc((1 - var(--hs-text, 0)) * 40px)) scale(calc(0.96 + var(--hs-text, 0) * 0.04));
+  pointer-events: none;
+}
+.hs.is-live .hs__text > * {
+  pointer-events: auto;
+}
+.hs__about {
+  max-width: 34ch;
+  font-size: var(--x-fs-lead-lg);
+  font-weight: 500;
+  line-height: 1.45;
+}
+/* Logos run as a quiet line straight after the story. */
+.xl--strip {
+  padding: clamp(28px, 4vw, 56px) 0;
+}
+.xl--strip .xl__track img {
+  --k: clamp(30px, 3vw, 44px);
+}
+
+@media (max-width: 700px) {
+  .hs {
+    height: 420vh;
+  }
+  .hs__frame {
+    width: 38vw;
+  }
+  .hs__frame--1 {
+    width: 28vw;
+  }
+  .hs__frame--2 {
+    width: 44vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hs {
+    height: auto;
+  }
+  .hs__stage {
+    position: static;
+    height: auto;
+    padding: var(--x-sp-section) 0;
+    perspective: none;
+  }
+  .hs__text {
+    position: static;
+    opacity: 1;
+    transform: none;
+  }
+  .hs__text {
+    margin-top: var(--x-sp-section);
+  }
+  .hs__frames {
+    display: none;
+  }
+}
+
+/* ── Bending hero ────────────────────────────────────────── */
+.hb {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  background: var(--x-ink);
+}
+.hb.is-live {
+  height: 340vh;
+}
+.hb__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+.hb__video,
+.hb__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.hb__video {
+  object-fit: cover;
+}
+/* once WebGL draws, the source video only feeds the texture */
+.hb.is-gl .hb__video {
+  opacity: 0;
+}
+.hb__claim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: var(--hb-claim, 0);
+  pointer-events: none;
+}
+/* the claim wipes in from the left, like a line being typed onto the band */
+.hb__wipe {
+  width: var(--hb-wipe, 0%);
+}
+.hb__claim text {
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 900;
+  font-size: var(--hb-fs, 64px);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  fill: var(--x-paper);
+}
+.hb__title {
+  position: absolute;
+  left: var(--x-gutter);
+  bottom: clamp(18px, 4vh, 44px);
+  margin: 0;
+  font-weight: 900;
+  font-size: clamp(2.1rem, 5vw, 5.4rem);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--x-paper);
+  opacity: var(--hb-title, 1);
+}
+@media (max-width: 700px) {
+  .hb__title {
+    bottom: 28px;
+  }
+}
+
+/* closing call under the cases: one line to the full overview */
+.xc__all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  width: fit-content;
+  /* clear of the stepped-down right card above */
+  margin: clamp(48px, 7vw, 110px) auto 0;
+  padding-bottom: clamp(60px, 8vw, 120px);
+  color: var(--x-paper);
+}
+.xc__all-text {
+  font-weight: 900;
+  font-size: var(--x-fs-title);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  transition: color 0.4s var(--x-ease);
+}
+.xc__all-go {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  aspect-ratio: 1;
+  background: var(--x-orange);
+  color: var(--x-ink);
+  transition: translate 0.6s var(--x-ease);
+}
+.xc__all:hover .xc__all-text,
+.xc__all:focus-visible .xc__all-text {
+  color: var(--x-orange);
+}
+.xc__all:hover .xc__all-go,
+.xc__all:focus-visible .xc__all-go {
+  translate: 10px 0;
+}
+.xc__all:focus-visible {
+  outline: 2px solid var(--x-orange);
+  outline-offset: 6px;
+}

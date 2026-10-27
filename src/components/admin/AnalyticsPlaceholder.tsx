@@ -35,14 +35,14 @@ export function AnalyticsPlaceholder() {
       </h2>
       <p className="admin-hint" style={{ marginBottom: "1rem" }}>
         Diese Werte sind Platzhalter. Sie werden später über die Google
-        Analytics Data API (serverseitig) befüllt — siehe Code-Kommentare und
+        Analytics Data API (serverseitig) befüllt, siehe Code-Kommentare und
         die GA4-Variablen in <code>.env.example</code>.
       </p>
 
       <div className="admin-stats">
         {METRIC_CARDS.map((m) => (
           <div className="admin-stat" key={m.label} title={m.hint}>
-            <div className="admin-stat__value">—</div>
+            <div className="admin-stat__value">-</div>
             <div className="admin-stat__label">{m.label}</div>
           </div>
         ))}
@@ -61,7 +61,7 @@ export function AnalyticsPlaceholder() {
               className="admin-hint"
               style={{ marginTop: "0.6rem", fontStyle: "italic" }}
             >
-              Keine Daten — {c.hint}
+              Keine Daten: {c.hint}
             </p>
           </div>
         ))}

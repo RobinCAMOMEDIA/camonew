@@ -6,6 +6,7 @@ import { api } from "@convex/_generated/api";
 const SOURCE_LABELS: Record<string, string> = {
   overlay: "Catch Us Formular",
   records: "Catch Moments Formular",
+  home: "Startseite (Satz-Formular)",
   website: "Website",
 };
 

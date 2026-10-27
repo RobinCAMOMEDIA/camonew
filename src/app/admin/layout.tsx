@@ -8,7 +8,7 @@ import { AdminNavLinks } from "@/components/admin/AdminNavLinks";
 import { AdminServicesButton } from "@/components/admin/AdminServicesButton";
 
 export const metadata = {
-  title: "Admin – CAMO Media",
+  title: "Admin | CAMO Media",
   robots: { index: false, follow: false },
 };
 

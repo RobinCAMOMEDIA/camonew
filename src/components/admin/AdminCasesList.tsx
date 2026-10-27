@@ -114,7 +114,7 @@ export function AdminCasesList() {
       {error && <div className="admin-alert admin-alert--error">{error}</div>}
       <p className="admin-hint" style={{ marginBottom: "0.75rem" }}>
         Tipp: Ziehe einen Case am <span aria-hidden="true">⠿</span>-Griff, um die
-        Reihenfolge zu ändern — sie bestimmt, wie die Cases öffentlich
+        Reihenfolge zu ändern. Sie bestimmt, wie die Cases öffentlich
         präsentiert werden.
       </p>
       <div className="admin-table-wrap" style={{ marginTop: error ? "1rem" : 0 }}>

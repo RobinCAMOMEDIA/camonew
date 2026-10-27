@@ -1,210 +1,174 @@
 import type { Metadata } from "next";
-import { RecordsContactForm } from "@/components/RecordsContactForm";
+import { RecordsContactForm } from "@/components/records/RecordsContactForm";
+import { Arrow } from "@/components/site/Arrow";
+import { VerticalClip } from "@/components/records/VerticalClip";
+import "./records.css";
 
 export const metadata: Metadata = {
-  title: "Records – CAMO Media | Hamburg",
+  title: "Records | CAMO Media Hamburg",
   description:
-    "Mehr über CAMO Records – Musikproduktion, DJ-Booking, Artist Management und exklusive Brand Soundtracks.",
+    "Catchmoments Records: Musikproduktion, DJ-Booking, Artist Management und exklusive Brand Soundtracks aus Hamburg.",
 };
 
-const BENEFITS = [
+// Offers from the original Records page, read as a setlist.
+// The four Records offers, each with a picture.
+const OFFERS = [
   {
-    title: "Exklusive Musikproduktion",
-    desc: "Bespoke Soundtracks, die exklusiv auf eure Kampagnen-Visuals komponiert und abgestimmt werden.",
-    icon: (
-      <>
-        <path d="M9 18V5l12-2v13" />
-        <circle cx="6" cy="18" r="3" />
-        <circle cx="18" cy="16" r="3" />
-      </>
-    ),
+    title: "Musikproduktion",
+    text: "Bespoke Soundtracks, die exklusiv auf eure Kampagnen-Visuals komponiert und abgestimmt werden.",
+    media: { kind: "image", src: "/assets/images/records/still-crew.jpg", focus: "50% 40%" },
   },
   {
     title: "Rechtssicherheit",
-    desc: "Keine Lizenzblockaden oder DMCA-Warnungen auf Social Media. Der Soundtrack gehört komplett euch.",
-    icon: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />,
+    text: "Keine Lizenzblockaden oder DMCA-Warnungen auf Social Media. Der Soundtrack gehört komplett euch.",
+    media: { kind: "image", src: "/assets/images/records/still-flags.jpg", focus: "50% 45%" },
   },
   {
     title: "Artist Relations",
-    desc: "Direkter Draht zu Newcomern und etablierten Acts für Bookings und Kooperationen.",
-    icon: (
-      <>
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-      </>
-    ),
+    text: "Direkter Draht zu Newcomern und etablierten Acts für Bookings und Kooperationen.",
+    media: { kind: "image", src: "/assets/images/chacho2.jpg", focus: "50% 38%" },
   },
   {
     title: "Tonstudio Hamburg",
-    desc: "Professionelles In-house Studio für Vocals, Podcasts, Mixing & Mastering.",
-    icon: (
-      <>
-        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-        <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-        <line x1="12" y1="19" x2="12" y2="23" />
-        <line x1="8" y1="23" x2="16" y2="23" />
-      </>
-    ),
+    text: "Professionelles In-house Studio für Vocals, Podcasts, Mixing & Mastering.",
+    media: { kind: "image", src: "/assets/images/musichero.jpg", focus: "45% 50%" },
   },
 ];
 
+// Photo wall slots: swap any src for new shots, the layout stays.
+const WALL = [
+  { src: "/assets/images/chacho1.jpg", alt: "Chacho live vor vollem Festival-Publikum", shape: "tall", focus: "50% 30%" },
+  { src: "/assets/images/records/still-open.jpg", alt: "Szene aus dem Musikvideo „Sie wären so gerne wie wir“", shape: "wide", focus: "50% 45%" },
+  { src: "/assets/images/records/still-chacho.jpg", alt: "Chacho im Musikvideo", shape: "square", focus: "35% 40%" },
+  { src: "/assets/images/records/still-floor.jpg", alt: "Tanzfläche beim Videodreh", shape: "square", focus: "50% 40%" },
+];
+
+function Dot() {
+  return <span className="x-dot" aria-hidden="true" />;
+}
+
 export default function RecordsPage() {
   return (
-    <>
-      <header className="about-hero records-hero">
-        <div className="about-hero__bg-decorations" aria-hidden="true">
-          <div className="about-hero__grid" />
-          <div className="about-hero__glow" />
+    <div className="rc">
+      {/* ── Stage: the page opens mid-concert ──────────────────────────── */}
+      <header className="rc-stage">
+        <video
+          className="rc-stage__photo"
+          src="/assets/videos/records/hero.mp4"
+          poster="/assets/images/records/still-open.jpg"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          controls={false}
+          disablePictureInPicture
+          controlsList="nodownload nofullscreen noremoteplayback"
+          aria-hidden="true"
+          tabIndex={-1}
+        />
+        <div className="rc-stage__scrim" aria-hidden="true" />
+        <div className="rc-stage__text">
+          <h1 className="rc-stage__title x-wide">
+            Sounds of <span className="x-nowrap">Culture<Dot /></span>
+          </h1>
+          <p className="rc-stage__lead">
+            Catchmoments Records ist das Musik-Label von CAMO: Produktion,
+            Booking, Artist Management und unser eigenes Studio in Hamburg.
+          </p>
+          <a href="#booking" className="x-more rc-stage__more">
+            <span>Booking anfragen</span>
+            <span className="x-more__dot" aria-hidden="true"><Arrow /></span>
+          </a>
         </div>
-        <span
-          className="about-hero__subtitle reveal"
-          style={{ color: "var(--accent)" }}
-        >
-          CATCHMOMENTS RECORDS
-        </span>
-        <h1 className="about-hero__title reveal">
-          SOUNDS OF CULTURE<span className="square-dot" />
-        </h1>
       </header>
 
-      <section className="records-about-section">
-        <div className="container">
-          <div className="records-about-grid reveal">
-            <div className="records-about-brand-col">
-              <div className="records-brand-stamp">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/assets/images/catchmomentsrecords.png"
-                  alt="Catchmoments Records Logo"
-                  className="records-stamp-logo"
-                />
-              </div>
-              <h2 className="records-about-title">
-                Lizenzen sind von gestern<span className="square-dot" />
-                <br />
-                Wir machen den Sound selbst<span className="square-dot" />
-              </h2>
-            </div>
-            <div className="records-about-text-col">
-              <p className="records-about-p">
-                Bei uns war es die Musik, die den Rhythmus vorgab und alles
-                andere mit sich brachte. Unser Gründer Ufuk Karatag ist seit über
-                20 Jahren in der Musikindustrie aktiv, hat mehr als 100 Liveshows
-                auf die Beine gestellt, Festivals betreut, Songs geschrieben und
-                Brand-Kooperationen eingefädelt. Aus dieser Leidenschaft heraus
-                wurde Catchmoments Records geboren. Uns treibt der ungeschliffene
-                Vibe des Hip-Hops an — von den Anfängen im Jahr 2002 bis zu
-                wegweisenden Kollaborationen mit Mortel & Sido, Bonez MC,
-                Haftbefehl, Nimo und OG Keemo. Durch die direkte Synergie mit der
-                Mutteragentur CAMO bieten wir eine echte 360-Grad-Betreuung: von
-                der ersten Song-Idee in unserem Hamburger Studio bis zum fertigen
-                Mastering und reichweitenstarken Kampagnen.
-              </p>
-            </div>
-          </div>
+      {/* ── Statement on paper ─────────────────────────────────────────── */}
+      <section className="rc-paper" aria-labelledby="rc-paper-title">
+        <div className="rc-paper__text">
+          <h2 className="rc-paper__title x-wide" id="rc-paper-title">
+            Lizenzen sind von <span className="x-nowrap">gestern<Dot /></span>{" "}
+            Wir machen den Sound <span className="x-nowrap">selbst<Dot /></span>
+          </h2>
+          <p className="rc-paper__story" data-appear="">
+          Bei uns war es die Musik, die den Rhythmus vorgab und alles andere mit
+          sich brachte. Unser Gründer Ufuk Karatag ist seit über 20 Jahren in
+          der Musikindustrie aktiv, hat mehr als 100 Liveshows auf die Beine
+          gestellt, Festivals betreut, Songs geschrieben und Brand-Kooperationen
+          eingefädelt. Aus dieser Leidenschaft heraus wurde Catchmoments Records
+          geboren. Uns treibt der ungeschliffene Vibe des Hip-Hops an: von den
+          Anfängen im Jahr 2002 bis zu wegweisenden Kollaborationen mit Mortel
+          &amp; Sido, Bonez MC, Haftbefehl, Nimo und OG Keemo. Durch die direkte
+          Synergie mit der Mutteragentur CAMO bieten wir eine echte
+          360-Grad-Betreuung: von der ersten Song-Idee in unserem Hamburger
+          Studio bis zum fertigen Mastering und reichweitenstarken Kampagnen.
+        </p>
+        </div>
+        <div className="rc-paper__clip" data-appear="">
+          <VerticalClip
+            src="/assets/videos/records/hero.mp4"
+            start={24}
+            poster="/assets/images/records/still-crew.jpg"
+            focus="62% 50%"
+          />
         </div>
       </section>
 
-      <section className="records-console-section">
-        <div className="container">
-          <div className="records-showcase-title-wrap reveal">
-            <div className="label" style={{ marginBottom: "var(--space-xs)" }}>
-              Camo Records
-            </div>
-            <h2
-              className="about-hero__subtitle"
-              style={{
-                color: "var(--text-primary)",
-                fontSize: "2.2rem",
-                letterSpacing: "-0.02em",
-                textTransform: "uppercase",
-              }}
-            >
-              Sounds of the Scene<span className="square-dot" />
-            </h2>
-          </div>
-
-          <div className="records-console-grid">
-            <div className="records-showcase__left-photo reveal-left">
-              <div className="records-pillar-photo">
+      {/* ── Offers: four tracks, staggered ─────────────────────────────── */}
+      <section className="rc-offers" aria-labelledby="rc-offers-title">
+        <h2 className="x-h2" id="rc-offers-title">
+          Vom Song bis zur <span className="x-nowrap">Bühne<Dot /></span>
+        </h2>
+        <ul className="rc-offers__grid">
+          {OFFERS.map((o, i) => (
+            <li key={o.title} className="rc-offer" data-appear="" style={{ "--d": i * 90 } as React.CSSProperties}>
+              <div className="rc-offer__media">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/assets/images/chacho1.jpg"
-                  alt="Chacho live on stage - CAMO Records Artist"
-                  className="records-pillar-img"
-                />
+                <img src={o.media.src} alt="" loading="lazy" decoding="async" style={{ objectPosition: o.media.focus }} />
               </div>
-            </div>
-
-            <div className="records-showcase__content reveal">
-              <div className="records-benefits-stack">
-                {BENEFITS.map((b) => (
-                  <div className="records-benefit-item" key={b.title}>
-                    <div className="records-benefit-icon">
-                      <svg
-                        className="benefit-icon-svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        {b.icon}
-                      </svg>
-                    </div>
-                    <div className="records-benefit-content">
-                      <h3 className="records-benefit-title">{b.title}</h3>
-                      <p className="records-benefit-desc">{b.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="records-showcase__right-photo reveal-right">
-              <div className="records-pillar-photo records-pillar-photo--offset">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/assets/images/chacho2.jpg"
-                  alt="Chacho vocal performance - CAMO Records Artist"
-                  className="records-pillar-img"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+              <h3 className="rc-offer__title x-wide">
+                <span className="rc-offer__mark" aria-hidden="true" />
+                {o.title}
+              </h3>
+              <p className="rc-offer__text">{o.text}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
-      <section className="records-contact-section" id="contact">
-        <div className="container">
-          <div className="records-contact-split reveal">
-            <div className="records-contact-info">
-              <span className="label">Contact Form</span>
-              <h2 className="records-contact-title">
-                Music Inquiries<span className="square-dot" />
-              </h2>
-              <p className="records-contact-subtitle">
-                Schreib uns dein Anliegen oder deine Booking-Anfrage – wir melden
-                uns innerhalb von 24 Stunden.
-              </p>
-              <div className="records-contact-meta">
-                <div className="meta-item">
-                  <span className="meta-label">Direktkontakt</span>
-                  <a href="mailto:hello@camo.media" className="meta-link">
-                    hello@camo.media
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className="records-contact-form-wrap">
-              <RecordsContactForm />
-            </div>
-          </div>
+      {/* ── Photo wall ─────────────────────────────────────────────────── */}
+      <section className="rc-wall" aria-labelledby="rc-wall-title">
+        <h2 className="x-h2" id="rc-wall-title">
+          Live &amp; am <span className="x-nowrap">Set<Dot /></span>
+        </h2>
+        <ul className="rc-wall__grid">
+          {WALL.map((w) => (
+            <li key={w.src} className={`rc-wall__item rc-wall__item--${w.shape}`} data-appear="">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={w.src} alt={w.alt} loading="lazy" decoding="async" style={{ objectPosition: w.focus }} />
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* ── Booking close ──────────────────────────────────────────────── */}
+      <section className="rc-book" id="booking" aria-labelledby="rc-book-title" data-ground="orange">
+        <div className="rc-book__aside">
+          <h2 className="rc-book__title x-wide" id="rc-book-title">
+            Booking &amp; <span className="x-nowrap">Anfragen<Dot /></span>
+          </h2>
+          <p className="rc-book__lead">
+            Schreib uns dein Anliegen oder deine Booking-Anfrage, wir melden
+            uns innerhalb von 24 Stunden.
+          </p>
+          <a href="mailto:hello@camo.media" className="rc-book__mail">
+            hello@camo.media
+          </a>
+        </div>
+        <div className="rc-book__form">
+          <RecordsContactForm />
         </div>
       </section>
-    </>
+    </div>
   );
 }

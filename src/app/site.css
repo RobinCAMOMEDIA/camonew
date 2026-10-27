@@ -1,0 +1,1567 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   CAMO v5 — global foundation. Tokens, reset, type and spacing scale,
+   shared components (dot, pill, more-link, nav, menu, footer, cursor,
+   Catch-us sheet, consent banner). Page styles live next to each page.
+   RULES: BRANDGUIDE.md. Never hard-code a colour, font size or section
+   spacing in a page stylesheet; use the tokens below.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Colour: three inks, nothing else ── */
+  --x-ink: #0b0a09;
+  --x-ink-2: #151311; /* media well only, never a surface */
+  --x-paper: #efebe4;
+  --x-orange: #ff7d00;
+  --x-dim: rgba(239, 235, 228, 0.55); /* tiny meta only, never running text */
+
+  /* ── Type families ── */
+  --x-display: var(--font-archivo), "Arial Black", system-ui, sans-serif;
+  --x-body: var(--font-archivo), system-ui, sans-serif;
+  --x-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  /* ── Type scale ── */
+  --x-fs-display: clamp(3rem, 8.4vw, 6rem); /* home statement, /about questions */
+  --x-fs-h2: clamp(1.9rem, 3.4vw, 3.4rem); /* every page/section title + closes */
+  --x-fs-title: clamp(1.4rem, 2.2vw, 2.3rem); /* item heads: clients, steps, cards */
+  --x-fs-subtitle: clamp(1.15rem, 1.7vw, 1.7rem); /* smaller item heads */
+  --x-fs-item: clamp(1rem, 1.35vw, 1.35rem); /* tile titles, more-links, mail links */
+  --x-fs-lead-lg: clamp(19px, 1.65vw, 24px); /* long-form voice, story leads */
+  --x-fs-lead: clamp(16px, 1.25vw, 18px); /* the paragraph under a title */
+  --x-fs-input: clamp(17px, 1.3vw, 20px); /* form fields */
+  --x-fs-body: clamp(15px, 1.1vw, 17px); /* lists, card text, step text */
+  --x-fs-small: 14px; /* privacy lines, footnotes */
+  --x-fs-label: 13px; /* expanded uppercase labels, chips */
+  --x-fs-meta: 11px; /* Plex Mono whispers only */
+
+  /* ── Spacing scale ── */
+  --x-gutter: clamp(16px, 2.6vw, 40px); /* page side padding */
+  --x-gap: clamp(16px, 2vw, 32px); /* grid column gap */
+  --x-sp-hero-top: clamp(160px, 19vh, 210px); /* first section, clears the nav */
+  --x-sp-section: clamp(110px, 12vw, 190px); /* space between sections */
+  --x-sp-close: clamp(80px, 10vw, 140px); /* inner padding of orange closes */
+  --x-sp-head: clamp(36px, 4vw, 56px); /* section title → its content */
+
+  /* ── Shape & motion ── */
+  --x-pill: 999px; /* nav chrome + Catch-us pills only; everything else is square */
+  --x-ease: cubic-bezier(0.19, 1, 0.22, 1);
+  --x-ease-io: cubic-bezier(0.76, 0, 0.24, 1);
+  /* Content waits for the intro when it plays (set by IntroDot's script). */
+  --intro-delay: 0.1s;
+}
+.intro-play {
+  --intro-delay: 1.05s;
+}
+
+/* ── Reset ── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+}
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: var(--x-ink);
+  color: var(--x-paper);
+  font-family: var(--x-body);
+  line-height: 1.5;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+ul,
+ol {
+  list-style: none;
+}
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+button {
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Browser surfaces in the brand palette */
+::selection {
+  background: var(--x-orange);
+  color: var(--x-ink);
+}
+
+/* ── Primitives ── */
+/* Our dots are square: <span class="x-dot" /> instead of a typed "." */
+.x-dot {
+  display: inline-block;
+  width: 0.17em;
+  height: 0.17em;
+  margin-left: 0.06em;
+  background: var(--x-orange);
+}
+[data-ground="orange"] .x-dot {
+  background: var(--x-ink);
+}
+.x-nowrap {
+  white-space: nowrap;
+}
+/* Wide display cut (Archivo's width axis). */
+.x-wide {
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+}
+/* Section / page title. The only title size besides the home display. */
+.x-h2 {
+  margin: 0;
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--x-fs-h2);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+}
+/* Lead paragraph under a title. */
+.x-lead {
+  max-width: 44ch;
+  font-size: var(--x-fs-lead);
+  font-weight: 500;
+  line-height: 1.55;
+}
+/* Expanded uppercase label (form labels, small heads). Never an eyebrow. */
+.x-label {
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--x-fs-label);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+/* Visually hidden, still read by screen readers. */
+.x-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── Film grain overlay ── */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+}
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: -200%;
+  width: 400%;
+  height: 400%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+  animation: grain-move 0.4s steps(2) infinite;
+}
+@keyframes grain-move {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-5%, -5%);
+  }
+  100% {
+    transform: translate(5%, 2%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .grain::after {
+    animation: none;
+  }
+}
+
+/* ── Intro dot ────────────────────────────────────────────────────────── */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--x-ink);
+  pointer-events: none;
+  animation: intro-wipe 0.42s var(--x-ease-io) 0.82s forwards;
+}
+html:not(.intro-play) .intro,
+.intro-done .intro {
+  display: none;
+}
+.intro__dot {
+  width: 18px;
+  height: 18px;
+  background: var(--x-orange);
+  transform: scale(0);
+  animation:
+    intro-dot-in 0.32s var(--x-ease) 0.05s forwards,
+    intro-dot-fill 0.42s var(--x-ease-io) 0.42s forwards;
+}
+.intro__meta {
+  position: absolute;
+  bottom: 28px;
+  font-family: var(--x-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--x-dim);
+  opacity: 0;
+  animation: intro-meta 0.5s ease 0.1s forwards;
+}
+.intro__meta--l {
+  left: var(--x-gutter);
+}
+.intro__meta--r {
+  right: var(--x-gutter);
+}
+@keyframes intro-dot-in {
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes intro-dot-fill {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(240);
+  }
+}
+@keyframes intro-meta {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes intro-wipe {
+  to {
+    transform: translateY(-100%);
+    visibility: hidden;
+  }
+}
+
+/* ── Nav ──────────────────────────────────────────────────────────────── */
+.cn {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px var(--x-gutter);
+  color: var(--x-paper);
+  font-family: var(--x-body);
+  pointer-events: none;
+}
+.cn a,
+.cn button {
+  pointer-events: auto;
+}
+:where(.cn) button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.cn a:focus-visible,
+.cn button:focus-visible,
+.cn-menu a:focus-visible,
+.cn-menu button:focus-visible {
+  outline: 2px solid var(--x-orange);
+  outline-offset: 4px;
+}
+
+.cn-logo {
+  display: block;
+  color: inherit;
+  padding: 4px 0;
+  animation: cn-fade 0.6s var(--x-ease) var(--intro-delay) both;
+}
+.cn-logo__mark {
+  display: block;
+  width: 104px;
+  aspect-ratio: 836.68 / 221.75;
+  background: currentColor;
+  -webkit-mask: url("/assets/images/camo-mark.svg") center / contain no-repeat;
+  mask: url("/assets/images/camo-mark.svg") center / contain no-repeat;
+  transition: background-color 0.3s ease;
+}
+.cn-logo:hover .cn-logo__mark {
+  background: var(--x-orange);
+}
+
+/* Hover text-roll: label slides up, an orange twin slides in. */
+.cn-roll {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  line-height: 1.15;
+  vertical-align: bottom;
+}
+.cn-roll > span {
+  display: inline-block;
+  transition: transform 0.5s var(--x-ease);
+}
+.cn-roll::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  color: var(--x-orange);
+  white-space: nowrap;
+  transition: transform 0.5s var(--x-ease);
+}
+a:hover > .cn-roll > span,
+a:hover > .cn-roll::after {
+  transform: translateY(-100%);
+}
+
+/* Logo left · links in one row top centre · Catch us right */
+.cn__left {
+  display: flex;
+  align-items: flex-start;
+  pointer-events: auto;
+}
+.cn__stack {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  padding: 5px;
+  pointer-events: auto;
+}
+.cn__link {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: baseline;
+  padding: 11px 18px;
+  color: var(--x-paper);
+  text-decoration: none;
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  transition: color 0.35s ease;
+  animation: cn-fade 0.6s var(--x-ease)
+    calc(var(--intro-delay) + 0.1s + var(--i) * 60ms) both;
+}
+/* the current page sits on the orange block, in ink */
+.cn__link.is-active,
+.cn__link.is-active :is(.cn-roll, .cn-ch)::after {
+  color: var(--x-ink);
+}
+.cn-glide {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  bottom: 5px;
+  width: 1px;
+  background: var(--x-orange);
+  transform-origin: 0 50%;
+  transform: translateX(var(--gx, 0)) scaleX(var(--gw, 0));
+  opacity: var(--gs, 0);
+  transition: transform 0.55s var(--x-ease), opacity 0.3s ease;
+}
+
+/* Catch us — set like the links; the orange square is its marker */
+.cn-catch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 11px 12px 11px 30px !important;
+  font-family: var(--x-display) !important;
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  animation: cn-fade 0.6s var(--x-ease) calc(var(--intro-delay) + 0.2s) both;
+}
+.cn-catch__fill {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  background: var(--x-orange);
+}
+/* The dot — mobile menu trigger */
+.cn-dot {
+  display: none;
+  position: relative;
+  z-index: 2;
+  width: 54px;
+  height: 54px;
+  flex: none;
+  place-items: center;
+  background: var(--x-orange) !important;
+  color: var(--x-ink) !important;
+  transition: transform 0.45s var(--x-ease), background-color 0.3s ease,
+    color 0.3s ease;
+  animation: cn-pop 0.6s var(--x-ease)
+    calc(var(--intro-delay) + 0.1s) both;
+}
+/* Open state: a drawn ink cross instead of a word. */
+.cn-dot__x {
+  position: relative;
+  width: 22px;
+  height: 22px;
+}
+.cn-dot__x span {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 2.5px;
+  margin-top: -1.25px;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+.cn-dot__x span + span {
+  transform: rotate(-45deg);
+}
+.cn-dot__label {
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.cn.is-menu {
+  color: var(--x-ink);
+}
+.cn.is-menu .cn-dot {
+  background: var(--x-ink) !important;
+  color: var(--x-orange) !important;
+}
+.cn.is-menu .cn__stack,
+.cn.is-menu .cn-catch {
+  opacity: 0;
+  pointer-events: none;
+}
+.cn.is-menu .cn-logo:hover .cn-logo__mark {
+  background: var(--x-ink);
+}
+
+@keyframes cn-fade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+@keyframes cn-pop {
+  from {
+    transform: scale(0);
+  }
+}
+
+/* ── Fullscreen menu (mobile) ─────────────────────────────────────────── */
+.cn-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 110px var(--x-gutter) 28px;
+  background: var(--x-orange);
+  color: var(--x-ink);
+  /* grows as a square out of the menu dot (the brand shape, not a circle) */
+  clip-path: inset(var(--my, 0%) calc(100% - var(--mx, 100%)) calc(100% - var(--my, 0%)) var(--mx, 100%));
+  visibility: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transition: clip-path 0.75s var(--x-ease-io), visibility 0s linear 0.75s;
+}
+.cn-menu.is-open {
+  clip-path: inset(0 0 0 0);
+  visibility: visible;
+  transition: clip-path 0.75s var(--x-ease-io), visibility 0s;
+}
+.cn-menu__links {
+  display: flex;
+  flex-direction: column;
+}
+.cn-menu__link {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: fit-content;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(40%);
+  transition: opacity 0.4s ease, transform 0.7s var(--x-ease);
+}
+.cn-menu.is-open .cn-menu__link {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(0.18s + var(--i) * 55ms);
+}
+.cn-menu__word {
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 900;
+  font-size: clamp(2.6rem, 11vw, 6rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  transition: transform 0.5s var(--x-ease), color 0.3s ease;
+}
+.cn-menu__link:hover .cn-menu__word {
+  color: var(--x-paper);
+  transform: translateX(0.15em);
+}
+.cn-menu__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 32px;
+  font-family: var(--x-mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.cn-menu__foot a {
+  color: inherit;
+  text-decoration: none;
+}
+.cn-menu__catch {
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  background: var(--x-ink);
+  color: var(--x-orange);
+  border: 0;
+  padding: 14px 24px;
+  cursor: pointer;
+}
+.cn-menu__socials {
+  display: flex;
+  gap: 24px;
+}
+.cn-menu__socials a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.cn-menu__foot a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 900px) {
+  .cn {
+    align-items: center;
+    padding: 14px 16px;
+  }
+  .cn-dot {
+    display: grid;
+  }
+  .cn__stack,
+  .cn-catch {
+    display: none !important;
+  }
+  /* keep the logo readable over content once the page scrolls */
+  .cn.is-scrolled:not(.is-menu) {
+    background: var(--x-ink);
+  }
+  .cn-logo__mark,
+  .cn.is-scrolled .cn-logo__mark {
+    width: 88px;
+  }
+}
+
+/* ── Cursor (the CAMO dot) ────────────────────────────────────────────── */
+.x-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10002;
+  /* Drawn at hover size and scaled down (the `scale` property composes with
+     the JS-driven transform), so only compositor properties animate. */
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  border: 1.5px solid transparent;
+  background: var(--x-orange);
+  pointer-events: none;
+  scale: 0.22;
+  transition: scale 0.3s var(--x-ease), background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+.x-cursor.is-hover {
+  scale: 1;
+  background: rgba(255, 125, 0, 0.12);
+  border-color: var(--x-orange);
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────── */
+.xf {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(90px, 10vw, 150px) clamp(16px, 6.5vw, 110px) 34px;
+  background: var(--x-ink);
+  color: var(--x-paper);
+  font-family: var(--x-body);
+}
+.xf__main {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 56px;
+  align-items: start;
+}
+.xf__logo {
+  display: block;
+  width: fit-content;
+  color: var(--x-paper);
+}
+.xf__logo-mark {
+  display: block;
+  width: clamp(220px, 30vw, 470px);
+  aspect-ratio: 836.68 / 221.75;
+  background: currentColor;
+  -webkit-mask: url("/assets/images/camo-mark.svg") center / contain no-repeat;
+  mask: url("/assets/images/camo-mark.svg") center / contain no-repeat;
+  transition: background-color 0.3s ease;
+}
+.xf__logo:hover .xf__logo-mark {
+  background: var(--x-orange);
+}
+.xf__cols {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  column-gap: clamp(32px, 4.6vw, 88px);
+  row-gap: 48px;
+}
+.xf__col {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  font-style: normal;
+}
+.xf__title {
+  margin: 0 0 18px;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--x-paper);
+}
+.xf__link,
+.xf__text {
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--x-paper);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.xf__link {
+  width: fit-content;
+  transition: color 0.25s ease;
+}
+.xf__link .x-arrow {
+  display: inline-block;
+  vertical-align: -0.1em;
+  transition: transform 0.3s var(--x-ease);
+}
+.xf__link:hover {
+  color: var(--x-orange);
+}
+.xf__link:hover .x-arrow {
+  translate: 3px -3px;
+}
+.xf__link:focus-visible,
+.xf__bottom a:focus-visible,
+.xf__bottom button:focus-visible,
+.xf__logo:focus-visible {
+  outline: 2px solid var(--x-orange);
+  outline-offset: 4px;
+}
+.xf__bottom {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 46px;
+  margin-top: clamp(80px, 10vw, 150px);
+  font-size: 13px;
+  color: var(--x-dim);
+}
+.xf__bottom a,
+.xf__bottom button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+.xf__bottom a:hover,
+.xf__bottom button:hover {
+  color: var(--x-paper);
+}
+@media (max-width: 1100px) {
+  .xf__main {
+    grid-template-columns: 1fr;
+    gap: 72px;
+  }
+  .xf__cols {
+    grid-template-columns: repeat(2, minmax(0, max-content));
+  }
+}
+@media (max-width: 520px) {
+  .xf__cols {
+    column-gap: 28px;
+  }
+  .xf__link,
+  .xf__text,
+  .xf__title {
+    font-size: 15px;
+  }
+  .xf__bottom {
+    gap: 12px 24px;
+    padding-bottom: 48px; /* room for the consent banner */
+  }
+}
+
+/* Small mono label: "(01) Was wir machen" */
+
+/* Big link with the orange arrow square */
+/* "More" link: the secondary action. A square-cornered frame (the pill is
+   reserved for Catch us); on hover orange wipes in from the left, the text
+   turns ink and the arrow nudges forward. */
+.x-more {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px 15px 22px;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: inset 0 0 0 2px currentColor;
+  color: var(--x-paper);
+  text-decoration: none;
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--x-fs-label);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: color 0.35s ease, box-shadow 0.35s ease;
+}
+.x-more::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--x-orange);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.5s var(--x-ease-io);
+}
+.x-more:hover,
+.x-more:focus-visible {
+  color: var(--x-ink);
+  box-shadow: inset 0 0 0 2px var(--x-orange);
+}
+.x-more:hover::before,
+.x-more:focus-visible::before {
+  clip-path: inset(0 0 0 0);
+}
+.x-more__dot {
+  display: inline-grid;
+  place-items: center;
+  color: var(--x-orange);
+  transition: transform 0.5s var(--x-ease), color 0.35s ease;
+}
+.x-more:hover .x-more__dot,
+.x-more:focus-visible .x-more__dot {
+  color: var(--x-ink);
+  transform: translateX(4px);
+}
+.x-more:focus-visible {
+  outline: 2px solid var(--x-orange);
+  outline-offset: 6px;
+}
+
+/* Big "Catch us" button (CatchUsButton) – ink pill, orange square floods it */
+.x-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  padding: 22px 36px 22px 60px;
+  border: 0;
+  border-radius: var(--x-pill, 999px);
+  background: var(--x-ink);
+  color: var(--x-paper);
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.35s ease;
+}
+.x-pill__fill {
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  z-index: -1;
+  width: 12px;
+  height: 12px;
+  margin-top: -6px;
+  background: var(--x-orange);
+  transition: transform 0.6s var(--x-ease), background-color 0.3s ease;
+}
+.x-pill:hover:not(:disabled) {
+  color: var(--x-ink);
+}
+.x-pill:hover:not(:disabled) .x-pill__fill {
+  transform: scale(40);
+  background: var(--x-paper);
+}
+.x-pill:focus-visible {
+  outline: 2px solid var(--x-ink);
+  outline-offset: 4px;
+}
+
+/* On an ink ground the pill turns paper; its seed floods orange. */
+.x-pill--light {
+  background: var(--x-paper);
+  color: var(--x-ink);
+}
+.x-pill--light:hover:not(:disabled) .x-pill__fill {
+  background: var(--x-orange);
+}
+.x-pill--light:focus-visible {
+  outline-color: var(--x-orange);
+}
+
+/* ── Appear on scroll (base) ──────────────────────────────────────────── */
+.js-appear [data-appear] {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s var(--x-ease), transform 0.9s var(--x-ease);
+  transition-delay: calc(var(--d, 0) * 1ms);
+}
+.js-appear [data-appear].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro {
+    display: none !important;
+  }
+  .cn *,
+  .cn,
+  .cn-menu,
+  .cn-menu * {
+    animation: none !important;
+    transition: none !important;
+  }
+  .js-appear [data-appear] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ── Utility: visually hidden ─────────────────────────────────────────── */
+
+/* ── Catch-us sheet (global contact overlay) ──────────────────────────── */
+/* A full-screen orange field that slides down from the top edge like a
+   blind, and rolls back up when it closes. Ink on orange. */
+.cto {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--x-orange);
+  color: var(--x-ink);
+  font-family: var(--x-body);
+  clip-path: inset(0 0 100% 0);
+  visibility: hidden;
+  transition: clip-path 0.55s var(--x-ease-io), visibility 0s linear 0.55s;
+}
+.cto.is-open {
+  clip-path: inset(0 0 0 0);
+  visibility: visible;
+  transition: clip-path 0.75s var(--x-ease-io), visibility 0s;
+}
+.cto ::selection {
+  background: var(--x-ink);
+  color: var(--x-orange);
+}
+.cto :focus-visible {
+  outline: 2px solid var(--x-ink);
+  outline-offset: 4px;
+}
+
+.cto__close {
+  position: fixed;
+  top: 22px;
+  right: var(--x-gutter);
+  z-index: 2;
+  width: 54px;
+  height: 54px;
+  border: 0;
+  background: var(--x-ink);
+  cursor: pointer;
+  transition: transform 0.5s var(--x-ease);
+}
+.cto__close span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 2.5px;
+  margin: -1.25px 0 0 -11px;
+  background: var(--x-orange);
+  transform: rotate(45deg);
+}
+.cto__close span + span {
+  transform: rotate(-45deg);
+}
+.cto__close:hover {
+  transform: rotate(90deg);
+}
+
+.cto__inner {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--x-gap);
+  align-content: center;
+  min-height: 100%;
+  padding: clamp(110px, 14vh, 150px) var(--x-gutter) clamp(48px, 7vh, 80px);
+}
+
+/* Lines rise in after the sheet has grown. */
+.cto__inner > * {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.cto.is-open .cto__inner > * {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.6s var(--x-ease) 0.38s, transform 0.9s var(--x-ease) 0.38s;
+}
+.cto.is-open .cto__inner > :nth-child(2) {
+  transition-delay: 0.46s;
+}
+.cto.is-open .cto__inner > :nth-child(3) {
+  transition-delay: 0.54s;
+}
+
+.cto__aside {
+  grid-column: 1 / span 5;
+  display: flex;
+  flex-direction: column;
+}
+.cto__title {
+  margin: 0;
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--x-fs-h2);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+.cto__title .x-dot {
+  background: var(--x-ink);
+}
+.cto__lead {
+  max-width: 34ch;
+  margin: 22px 0 0;
+  font-size: var(--x-fs-input);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.cto__form {
+  grid-column: 7 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.cto__pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.cto__field {
+  display: block;
+}
+.cto__label {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.cto__field input,
+.cto__field textarea {
+  display: block;
+  width: 100%;
+  padding: 4px 0 8px;
+  border: 0;
+  border-bottom: 3px solid var(--x-ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--x-ink);
+  font-family: var(--x-body);
+  font-size: var(--x-fs-input);
+  font-weight: 600;
+  line-height: 1.45;
+  caret-color: var(--x-ink);
+  transition: border-color 0.25s ease;
+}
+.cto__field textarea {
+  min-height: 110px;
+  font-weight: 500;
+  resize: vertical;
+}
+.cto__field input::placeholder,
+.cto__field textarea::placeholder {
+  color: rgba(11, 10, 9, 0.7);
+  opacity: 1;
+}
+.cto__field input:focus,
+.cto__field textarea:focus,
+.cto__field input:focus-visible,
+.cto__field textarea:focus-visible {
+  outline: none;
+  border-bottom-color: var(--x-paper);
+}
+
+/* Square-marker chips: still used by the Records booking form. */
+.cto__topic {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px 11px 14px;
+  border: 2px solid var(--x-ink);
+  background: transparent;
+  color: var(--x-ink);
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+.cto__topic-mark {
+  width: 10px;
+  height: 10px;
+  box-shadow: inset 0 0 0 2px currentColor;
+  transition: background-color 0.25s ease;
+}
+.cto__topic:hover {
+  background: rgba(11, 10, 9, 0.1);
+}
+.cto__topic[aria-pressed="true"] {
+  background: var(--x-ink);
+  color: var(--x-paper);
+}
+.cto__topic[aria-pressed="true"] .cto__topic-mark {
+  background: var(--x-orange);
+  box-shadow: none;
+}
+
+.cto__error {
+  margin: 18px 0 0;
+  padding: 12px 16px;
+  background: var(--x-ink);
+  color: var(--x-paper);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.cto__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px 28px;
+  margin-top: 4px;
+}
+/* The send pill is the shared .x-pill; on orange it floods paper on hover
+   (see .x-pill rules). While sending, its seed square pulses. */
+.x-pill:disabled {
+  cursor: progress;
+}
+.x-pill:disabled .x-pill__fill {
+  animation: x-pill-pulse 0.9s var(--x-ease-io) infinite alternate;
+}
+@keyframes x-pill-pulse {
+  to {
+    transform: rotate(90deg) scale(0.6);
+  }
+}
+.cto__privacy {
+  max-width: 34ch;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.cto__privacy a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+
+.cto__direct {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: auto;
+  padding-top: 48px;
+}
+.cto__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  color: var(--x-ink);
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--x-fs-body);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+}
+.cto__link .x-arrow {
+  transition: translate 0.4s var(--x-ease);
+}
+.cto__link:hover {
+  text-decoration-color: transparent;
+}
+.cto__link:hover .x-arrow {
+  translate: 3px -3px;
+}
+.cto__place {
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--x-fs-body);
+  text-transform: uppercase;
+}
+
+.cto__done {
+  grid-column: 7 / -1;
+  align-self: end;
+}
+
+@media (max-width: 900px) {
+  .cto__close {
+    top: 14px;
+  }
+  .cto__inner {
+    padding-top: 96px;
+  }
+  .cto__aside,
+  .cto__form,
+  .cto__done {
+    grid-column: 1 / -1;
+  }
+  .cto__direct {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px 22px;
+    padding-top: 22px;
+  }
+  .cto__place {
+    display: none;
+  }
+  .cto__form {
+    margin-top: 36px;
+  }
+  .cto__pair {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .cto__topic {
+    font-size: 12px;
+    padding: 10px 12px 9px 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cto,
+  .cto.is-open {
+    clip-path: none;
+    opacity: 0;
+    transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+  }
+  .cto.is-open {
+    opacity: 1;
+    transition: opacity 0.2s ease, visibility 0s;
+  }
+  .cto__inner > *,
+  .cto.is-open .cto__inner > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* The cursor turns ink over orange fields so it never disappears. */
+.x-cursor.is-on-orange {
+  background: var(--x-ink);
+}
+.x-cursor.is-on-orange.is-hover {
+  background: rgba(11, 10, 9, 0.12);
+  border-color: var(--x-ink);
+}
+
+/* ── Consent banner ───────────────────────────────────────────────────── */
+/* Bottom-left ink panel; the only bordered box on the site (it floats over
+   content, so it needs an edge). Buttons follow the pill / label system. */
+.consent {
+  position: fixed;
+  left: var(--x-gutter);
+  bottom: var(--x-gutter);
+  z-index: 4000;
+  width: min(440px, calc(100vw - 2 * var(--x-gutter)));
+  padding: 24px;
+  background: var(--x-ink);
+  border: 2px solid var(--x-paper);
+  color: var(--x-paper);
+  font-family: var(--x-body);
+}
+.consent__title {
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--x-fs-item);
+  text-transform: uppercase;
+}
+.consent__text {
+  margin-top: 10px;
+  font-size: var(--x-fs-small);
+  line-height: 1.5;
+}
+.consent__text a {
+  color: var(--x-orange);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.consent__settings {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+.consent__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.consent__row-title {
+  display: block;
+  font-size: var(--x-fs-small);
+  font-weight: 700;
+}
+.consent__row-desc {
+  display: block;
+  font-size: var(--x-fs-label);
+  line-height: 1.45;
+}
+/* Square toggle: hollow when off, orange when on. */
+.consent__switch {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
+}
+.consent__switch input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+.consent__slider {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 2px var(--x-paper);
+  transition: background-color 0.2s ease;
+}
+.consent__slider::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 14px;
+  height: 14px;
+  background: var(--x-paper);
+  transition: transform 0.25s var(--x-ease);
+}
+.consent__switch input:checked + .consent__slider {
+  background: var(--x-orange);
+  box-shadow: none;
+}
+.consent__switch input:checked + .consent__slider::after {
+  background: var(--x-ink);
+  transform: translateX(20px);
+}
+.consent__switch input:focus-visible + .consent__slider {
+  outline: 2px solid var(--x-orange);
+  outline-offset: 3px;
+}
+.consent__switch--locked {
+  cursor: default;
+  opacity: 0.7;
+}
+.consent__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-top: 20px;
+}
+.consent__btn {
+  padding: 12px 18px;
+  border-radius: var(--x-pill);
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--x-fs-label);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+.consent__btn--primary {
+  background: var(--x-orange);
+  color: var(--x-ink);
+}
+.consent__btn--primary:hover {
+  background: var(--x-paper);
+}
+.consent__btn--ghost {
+  box-shadow: inset 0 0 0 2px var(--x-paper);
+}
+.consent__btn--ghost:hover {
+  background: var(--x-paper);
+  color: var(--x-ink);
+}
+.consent__btn--text {
+  padding: 12px 4px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.consent__btn:focus-visible {
+  outline: 2px solid var(--x-orange);
+  outline-offset: 3px;
+}
+@media (max-width: 560px) {
+  .consent {
+    padding: 18px;
+  }
+  .consent__text {
+    font-size: var(--x-fs-label);
+  }
+  .consent__actions {
+    gap: 8px 10px;
+    margin-top: 14px;
+  }
+  .consent__btn {
+    padding: 10px 14px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MOTION PREVIEW (?v=4, html.vibe): smooth scroll, a living glow behind
+   every page, type on a drum, letter rolls and soft page entrances.
+   Set by VibeLayer; reduced motion never gets the class.
+   ═══════════════════════════════════════════════════════════════════════ */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.vibe-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  background: var(--x-ink);
+}
+/* pages let the glow through */
+.vibe :is(.xhome, .xh, .hs, .hb, .ab, .cd, .le, .rc, .xf) {
+  background: transparent;
+}
+
+/* type and frames on the drum (VibeLayer writes --vt) */
+.vibe [data-vc] {
+  transform: var(--vt, none) !important;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+.vibe.js-appear [data-appear][data-vc] {
+  transition: opacity 0.7s var(--x-ease);
+}
+
+/* page entrance: arrives out of a soft blur */
+.vibe .x-page {
+  animation: vibe-enter 0.9s var(--x-ease) both;
+}
+@keyframes vibe-enter {
+  from {
+    opacity: 0;
+    filter: blur(16px);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+/* nav: letters roll one after another */
+.cn-chars {
+  display: inline-flex;
+}
+.cn-ch {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  line-height: 1.15;
+  vertical-align: bottom;
+}
+.cn-ch > span,
+.cn-ch::after {
+  display: inline-block;
+  white-space: pre;
+  transition: transform 0.55s var(--x-ease);
+  transition-delay: calc(var(--c) * 22ms);
+}
+.cn-ch::after {
+  content: attr(data-ch);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  color: var(--x-orange);
+}
+a:hover .cn-ch > span,
+a:hover .cn-ch::after {
+  transform: translateY(-100%);
+}
+
+/* hero exit: the bent screen swings away to the left */
+.vibe .hb__canvas,
+.vibe .hb__claim {
+  transform: perspective(1400px)
+    translate3d(calc(var(--hb-out, 0) * -48vw), 0, calc(var(--hb-out, 0) * -300px))
+    rotateY(calc(var(--hb-out, 0) * 42deg));
+  transform-origin: 50% 50%;
+}
+/* hand-over hero → About: the screen swings out to the left while the
+   About text turns in from the right. The story is pulled up one screen
+   so there is no empty gap; its text stays hidden until the hero leaves. */
+.vibe .hb + .hs {
+  margin-top: -100vh;
+  margin-top: -100svh;
+}
+.vibe .hb + .hs .hs__text {
+  opacity: var(--hs-in, 1);
+  transform: perspective(1200px)
+    translate3d(calc((1 - var(--hs-in, 1)) * 44vw), 0, 0)
+    rotateY(calc((1 - var(--hs-in, 1)) * -38deg));
+}
+@media (max-width: 700px) {
+  .vibe .hb__canvas,
+  .vibe .hb__claim {
+    transform: perspective(900px)
+      translate3d(calc(var(--hb-out, 0) * -95vw), 0, 0)
+      rotateY(calc(var(--hb-out, 0) * 50deg));
+  }
+}
+
+/* static film grain on the background layer only; content stays clean */
+.vibe .grain {
+  display: none;
+}
+.vibe-bg-grain {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--vibe-grain);
+  background-size: 256px 256px;
+}
+
+.cn-catch:hover :is(.cn-roll, .cn-ch) > span,
+.cn-catch:hover :is(.cn-roll, .cn-ch)::after {
+  transform: translateY(-100%);
+}

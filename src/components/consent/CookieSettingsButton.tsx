@@ -6,11 +6,7 @@ import { openConsentSettings } from "./consent";
 // withdraw their cookie choice at any time.
 export function CookieSettingsButton() {
   return (
-    <button
-      type="button"
-      className="footer__legal-link"
-      onClick={openConsentSettings}
-    >
+    <button type="button" onClick={openConsentSettings}>
       Cookie-Einstellungen
     </button>
   );

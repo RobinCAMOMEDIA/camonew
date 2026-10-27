@@ -22,7 +22,7 @@ export function AdminStats() {
           <div
             className={`admin-stat__value${it.accent ? " admin-stat__value--accent" : ""}`}
           >
-            {it.value ?? "–"}
+            {it.value ?? "-"}
           </div>
           <div className="admin-stat__label">{it.label}</div>
         </div>

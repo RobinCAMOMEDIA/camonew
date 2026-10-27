@@ -1,7 +1,7 @@
 import { SignUp } from "@clerk/nextjs";
 
 export const metadata = {
-  title: "Registrieren – CAMO Media Admin",
+  title: "Registrieren | CAMO Media Admin",
   robots: { index: false, follow: false },
 };
 

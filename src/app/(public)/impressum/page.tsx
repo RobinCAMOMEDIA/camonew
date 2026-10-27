@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import "../legal.css";
 
 export const metadata: Metadata = {
-  title: "Impressum – CAMO Media | Hamburg",
+  title: "Impressum | CAMO Media Hamburg",
   description:
     "Impressum und rechtliche Hinweise der CAMO MEDIA, Hamburg. Angaben gemäß § 5 TMG.",
 };
@@ -10,14 +11,13 @@ export default function ImpressumPage() {
   return (
     <main className="legal-page">
       <header className="legal-hero">
-        <span className="legal-hero__subtitle">Rechtliche Hinweise</span>
-        <h1 className="legal-hero__title">
-          Impressum<span className="square-dot" />
+        <h1 className="x-h2">
+          <span className="x-nowrap">Impressum<span className="x-dot" aria-hidden="true" /></span>
         </h1>
       </header>
 
       <section className="legal-body">
-        <div className="container legal-content">
+        <div className="legal-content">
           <p className="legal-lead">Angaben gemäß § 5 TMG</p>
 
           <div className="legal-card">
@@ -26,16 +26,16 @@ export default function ImpressumPage() {
               <br />
               Ufuk Karatag
               <br />
-              Ruckteschellweg 8a
+              Wrangelstraße 100
               <br />
-              22089 Hamburg
+              20253 Eimsbüttel
             </p>
             <p>Vertreten durch Ufuk Karatag</p>
             <p>
               E-Mail:{" "}
               <a href="mailto:hello@camo.media">hello@camo.media</a>
               <br />
-              Tel: <a href="tel:+494022854474">040 – 22854474</a>
+              Tel: <a href="tel:+494022854474">040 22854474</a>
             </p>
             <p>
               Umsatzsteuer-Identifikationsnummer DE327181689 gemäß § 27 a
@@ -48,7 +48,7 @@ export default function ImpressumPage() {
           <h3 className="legal-h3">Verantwortlichkeit für den Inhalt</h3>
           <p>
             Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für
-            die Inhalte können wir jedoch keine Gewähr übernehmen – für
+            die Inhalte können wir jedoch keine Gewähr übernehmen: für
             Richtigkeit, Vollständigkeit oder Aktualität. Nach den gesetzlichen
             Bestimmungen sind wir ferner verantwortlich für eigene Inhalte auf
             diesen Webseiten. Bitte beachten Sie in diesem Zusammenhang, dass wir

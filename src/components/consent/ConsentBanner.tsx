@@ -55,10 +55,10 @@ export function ConsentBanner() {
       aria-modal="false"
       aria-label="Cookie-Einstellungen"
     >
-      <p className="consent__title">Wir respektieren deine Privatsphäre 🍪</p>
+      <p className="consent__title">Wir respektieren deine Privatsphäre</p>
       <p className="consent__text">
-        Wir nutzen notwendige Cookies für den Betrieb der Seite und – mit deiner
-        Einwilligung – Statistik-Cookies (Google Analytics), um die Website zu
+        Wir nutzen notwendige Cookies für den Betrieb der Seite und, mit deiner
+        Einwilligung, Statistik-Cookies (Google Analytics), um die Website zu
         verbessern. Du kannst frei wählen und deine Auswahl jederzeit ändern.
         Mehr in unserer{" "}
         <a href="/datenschutz" target="_blank" rel="noreferrer">
@@ -86,7 +86,7 @@ export function ConsentBanner() {
             <div>
               <span className="consent__row-title">Statistik / Analyse</span>
               <span className="consent__row-desc">
-                Google Analytics 4 — hilft uns zu verstehen, wie die Seite
+                Google Analytics 4 hilft uns zu verstehen, wie die Seite
                 genutzt wird.
               </span>
             </div>

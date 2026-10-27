@@ -21,3 +21,8 @@ next-env.d.ts
 
 # convex
 .convex
+
+# placeholder showreel of another agency: never ship it
+public/assets/videos/showreel.mp4
+# local design review screenshots
+.impeccable/

@@ -8,7 +8,7 @@ export default function AdminCasesPage() {
       <div className="admin-page-head">
         <div className="admin-page-head__titles">
           <h1>Cases</h1>
-          <p>Alle Case Studies verwalten — auch unveröffentlichte Entwürfe.</p>
+          <p>Alle Case Studies verwalten, auch unveröffentlichte Entwürfe.</p>
         </div>
         <Link href="/admin/cases/new" className="admin-btn admin-btn--primary">
           + Neuer Case

@@ -1,59 +1,40 @@
 import { mutation, query, QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
-import { Doc } from "./_generated/dataModel";
-import { heroColumnValidator } from "./schema";
+import { mediaRefValidator } from "./schema";
 import { requireAdmin } from "./lib";
 
 // ---------------------------------------------------------------------------
 // Home hero content (CMS-managed singleton).
 //
-// The hero is a 3-column video grid; each column cross-fades between its slides.
-// A slide = one looping video + a title (brand) + a small line of text (type).
-// We store one `siteContent` row keyed "hero". When it doesn't exist yet (fresh
-// deployment) we fall back to DEFAULT_HERO, which mirrors the original hardcoded
-// grid using the bundled /assets/videos/*.mp4 files.
+// The hero is a full-bleed video WALL with a fixed headline overlaid. Each
+// "slot" is one column of the wall and cross-fades through its list of videos
+// (like the previous hero, minus titles/labels). Stored as `heroSlots` on the
+// `siteContent` row keyed "hero"; falls back to DEFAULT_HERO_SLOTS otherwise.
 // ---------------------------------------------------------------------------
 
 const HERO_KEY = "hero";
 
-type HeroSlide = NonNullable<
-  Doc<"siteContent">["heroColumns"]
->[number]["slides"][number];
+type MediaRef = { storageId?: string; url?: string; kind: "image" | "video" };
+type Slot = { videos: MediaRef[] };
 
-// Default config — mirrors the original HeroVideoGrid. Videos reference the
-// static files shipped in /public so the site looks right before any upload.
-const DEFAULT_HERO = {
-  heroSubtitle: "BASED ON A CULTURE.",
-  heroColumns: [
-    {
-      slides: [
-        { video: { url: "/assets/videos/1.mp4", kind: "video" as const }, brand: "Apple Music", type: "Social Media Campaign" },
-        { video: { url: "/assets/videos/4.mp4", kind: "video" as const }, brand: "G-Shock", type: "Content Creation" },
-      ],
-    },
-    {
-      slides: [
-        { video: { url: "/assets/videos/2.mp4", kind: "video" as const }, brand: "About You", type: "Influencer Marketing" },
-        { video: { url: "/assets/videos/5.mp4", kind: "video" as const }, brand: "Landrover", type: "Digital Campaign" },
-      ],
-    },
-    {
-      slides: [
-        { video: { url: "/assets/videos/3.mp4", kind: "video" as const }, brand: "Red Bull", type: "Event Coverage" },
-        { video: { url: "/assets/videos/6.mp4", kind: "video" as const }, brand: "Nike", type: "Community Building" },
-      ],
-    },
-  ],
+// 4 columns; a couple cycle through 2 clips so the wall feels alive by default.
+const DEFAULT_HERO_SLOTS: Slot[] = [
+  { videos: [{ url: "/assets/videos/1.mp4", kind: "video" }, { url: "/assets/videos/5.mp4", kind: "video" }] },
+  { videos: [{ url: "/assets/videos/2.mp4", kind: "video" }, { url: "/assets/videos/6.mp4", kind: "video" }] },
+  { videos: [{ url: "/assets/videos/3.mp4", kind: "video" }] },
+  { videos: [{ url: "/assets/videos/4.mp4", kind: "video" }] },
+];
+
+// Placeholder showreel bundled in /public until a real one is uploaded.
+const DEFAULT_SHOWREEL: MediaRef = {
+  url: "/assets/videos/showreel.mp4",
+  kind: "video",
 };
 
-// Resolve a slide's stored storageId into a servable URL (external urls pass
-// through untouched), matching the media handling used for cases.
-async function resolveSlide(ctx: QueryCtx, slide: HeroSlide) {
-  let video = slide.video ? { ...slide.video, url: slide.video.url ?? null } : null;
-  if (video?.storageId) {
-    video = { ...video, url: await ctx.storage.getUrl(video.storageId) };
-  }
-  return { ...slide, video };
+async function resolveVideo(ctx: QueryCtx, ref: MediaRef) {
+  let url = ref.url ?? null;
+  if (ref.storageId) url = await ctx.storage.getUrl(ref.storageId);
+  return { ...ref, url };
 }
 
 async function resolveHero(ctx: QueryCtx) {
@@ -61,17 +42,22 @@ async function resolveHero(ctx: QueryCtx) {
     .query("siteContent")
     .withIndex("by_key", (q) => q.eq("key", HERO_KEY))
     .unique();
-  const base = doc ?? DEFAULT_HERO;
-  const columns = base.heroColumns ?? DEFAULT_HERO.heroColumns;
-  const heroColumns = await Promise.all(
-    columns.map(async (col) => ({
-      slides: await Promise.all(col.slides.map((s) => resolveSlide(ctx, s))),
+  const list =
+    doc?.heroSlots && doc.heroSlots.length > 0
+      ? (doc.heroSlots as Slot[])
+      : DEFAULT_HERO_SLOTS;
+  const slots = await Promise.all(
+    list.map(async (slot) => ({
+      videos: await Promise.all((slot.videos ?? []).map((r) => resolveVideo(ctx, r))),
     })),
   );
-  return {
-    heroSubtitle: base.heroSubtitle ?? DEFAULT_HERO.heroSubtitle,
-    heroColumns,
-  };
+  // Current design: one full-bleed showreel. `isDefault` tells the admin editor
+  // whether a custom upload exists or the bundled placeholder is in use.
+  const custom = doc?.heroShowreel as MediaRef | undefined;
+  const showreel = custom
+    ? { ...(await resolveVideo(ctx, custom)), isDefault: false }
+    : { ...DEFAULT_SHOWREEL, url: DEFAULT_SHOWREEL.url ?? null, isDefault: true };
+  return { slots, showreel };
 }
 
 /** Public hero content for the home page (resolved, never leaks storageIds). */
@@ -85,19 +71,14 @@ export const getHeroAdmin = query({
   args: {},
   handler: async (ctx) => {
     await requireAdmin(ctx);
-    const data = await resolveHero(ctx);
-    // Always expose exactly 3 columns so the editor renders a stable grid.
-    const heroColumns = [...data.heroColumns];
-    while (heroColumns.length < 3) heroColumns.push({ slides: [] });
-    return { ...data, heroColumns: heroColumns.slice(0, 3) };
+    return await resolveHero(ctx);
   },
 });
 
-/** Persist the full hero config (admin only). */
+/** Persist the hero slots (admin only). */
 export const updateHero = mutation({
   args: {
-    heroSubtitle: v.optional(v.string()),
-    heroColumns: v.array(heroColumnValidator),
+    heroSlots: v.array(v.object({ videos: v.array(mediaRefValidator) })),
   },
   handler: async (ctx, args) => {
     await requireAdmin(ctx);
@@ -107,8 +88,7 @@ export const updateHero = mutation({
       .unique();
     const data = {
       key: HERO_KEY,
-      heroSubtitle: args.heroSubtitle,
-      heroColumns: args.heroColumns,
+      heroSlots: args.heroSlots,
       updatedAt: Date.now(),
     };
     if (existing) {
@@ -116,5 +96,29 @@ export const updateHero = mutation({
       return existing._id;
     }
     return await ctx.db.insert("siteContent", data);
+  },
+});
+
+/** Set (or clear → placeholder) the home hero showreel video (admin only). */
+export const updateShowreel = mutation({
+  args: { showreel: v.optional(mediaRefValidator) },
+  handler: async (ctx, { showreel }) => {
+    await requireAdmin(ctx);
+    const existing = await ctx.db
+      .query("siteContent")
+      .withIndex("by_key", (q) => q.eq("key", HERO_KEY))
+      .unique();
+    if (existing) {
+      await ctx.db.patch(existing._id, {
+        heroShowreel: showreel,
+        updatedAt: Date.now(),
+      });
+      return existing._id;
+    }
+    return await ctx.db.insert("siteContent", {
+      key: HERO_KEY,
+      heroShowreel: showreel,
+      updatedAt: Date.now(),
+    });
   },
 });

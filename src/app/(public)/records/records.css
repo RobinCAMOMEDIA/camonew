@@ -1,0 +1,506 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   RECORDS — "Die Bühne": the page opens mid-concert. Full-bleed live photo
+   with the turning Catchmoments stamp · paper statement band · ink setlist
+   whose active row opens · orange booking close with the form. Three inks.
+   Shared: site.css (tokens, .x-h2, .x-more, .cto__topic / .cto__send).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rc {
+  background: var(--x-ink);
+  color: var(--x-paper);
+  font-family: var(--x-body);
+  overflow-x: clip;
+}
+
+@keyframes rc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes rc-settle {
+  from {
+    scale: 1.08;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+/* ── Stage ────────────────────────────────────────────────────────────── */
+.rc-stage {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 100svh;
+  padding: 0 var(--x-gutter) clamp(40px, 7vh, 72px);
+  overflow: hidden;
+  isolation: isolate;
+}
+.rc-stage__photo {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 30%;
+  /* push the clip's burned-in subtitles below the fold */
+  transform: scale(1.14);
+  transform-origin: 50% 20%;
+  animation: rc-settle 1.8s var(--x-ease) calc(var(--intro-delay, 0s)) both;
+}
+.rc-stage__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to top,
+    rgba(11, 10, 9, 0.92) 0%,
+    rgba(11, 10, 9, 0.55) 34%,
+    rgba(11, 10, 9, 0) 62%
+  );
+}
+.rc-stage__text {
+  max-width: 760px;
+}
+.rc-stage__title {
+  margin: 0;
+  font-weight: 800;
+  font-size: var(--x-fs-h2);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  animation: rc-rise 0.9s var(--x-ease) calc(var(--intro-delay, 0s) + 0.15s) both;
+}
+.rc-stage__lead {
+  max-width: 44ch;
+  margin: 20px 0 0;
+  font-size: var(--x-fs-lead);
+  font-weight: 500;
+  line-height: 1.55;
+  animation: rc-rise 0.9s var(--x-ease) calc(var(--intro-delay, 0s) + 0.3s) both;
+}
+.rc-stage__more {
+  margin-top: 28px;
+  animation: rc-rise 0.9s var(--x-ease) calc(var(--intro-delay, 0s) + 0.42s) both;
+}
+
+/* ── Paper statement ──────────────────────────────────────────────────── */
+.rc-paper {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--x-gap);
+  row-gap: 40px;
+  align-items: start;
+  padding: clamp(100px, 12vw, 180px) var(--x-gutter);
+  background: var(--x-paper);
+  color: var(--x-ink);
+}
+.rc-paper ::selection {
+  background: var(--x-ink);
+  color: var(--x-paper);
+}
+.rc-paper__text {
+  grid-column: 1 / span 7;
+  align-self: center;
+}
+.rc-paper__title {
+  margin: 0;
+  font-weight: 800;
+  font-size: var(--x-fs-h2);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.rc-paper__story {
+  max-width: 52ch;
+  margin: clamp(28px, 3vw, 44px) 0 0;
+  font-size: var(--x-fs-lead);
+  line-height: 1.6;
+}
+
+/* The upright clip: 9:16, flush, on the paper band. */
+.rc-paper__clip {
+  grid-column: 9 / span 4;
+  position: relative;
+  aspect-ratio: 9 / 16;
+  max-height: 82vh;
+  justify-self: end;
+  width: 100%;
+  overflow: hidden;
+  background: var(--x-ink);
+}
+.rc-paper__clip video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* push the clip's burned-in subtitles out of the frame */
+  transform: scale(1.2);
+  transform-origin: 50% 12%;
+}
+
+/* ── Photo wall ───────────────────────────────────────────────────────── */
+.rc-wall {
+  padding: var(--x-sp-section) var(--x-gutter) 0;
+}
+.rc-wall__grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: clamp(150px, 15vw, 250px);
+  gap: clamp(10px, 1.2vw, 18px);
+  margin: var(--x-sp-head) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.rc-wall__item {
+  position: relative;
+  overflow: hidden;
+  background: var(--x-ink-2);
+}
+.rc-wall__item img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale 0.9s var(--x-ease);
+}
+.rc-wall__item:hover img {
+  scale: 1.05;
+}
+.rc-wall__item--tall {
+  grid-column: 1 / span 4;
+  grid-row: span 3;
+}
+.rc-wall__item--wide {
+  grid-column: 5 / -1;
+  grid-row: span 2;
+}
+.rc-wall__item--square {
+  grid-column: span 4;
+}
+
+/* ── Offers: four portrait frames, every other one stepped down ────────── */
+.rc-offers {
+  padding: var(--x-sp-section) var(--x-gutter) 0;
+}
+.rc-offers__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--x-gap);
+  margin: var(--x-sp-head) 0 0;
+  padding: 0 0 clamp(40px, 6vw, 96px);
+  list-style: none;
+}
+.rc-offer:nth-child(even) {
+  translate: 0 clamp(40px, 6vw, 96px);
+}
+.rc-offer__media {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--x-ink-2);
+}
+.rc-offer__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale 0.9s var(--x-ease);
+}
+.rc-offer:hover .rc-offer__media img {
+  scale: 1.05;
+}
+.rc-offer__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0 0;
+  font-weight: 800;
+  font-size: var(--x-fs-item);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+.rc-offer:hover .rc-offer__title {
+  color: var(--x-orange);
+}
+.rc-offer__mark {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  background: var(--x-orange);
+}
+.rc-offer__text {
+  max-width: 32ch;
+  margin: 12px 0 0;
+  font-size: var(--x-fs-body);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* ── Booking close ────────────────────────────────────────────────────── */
+.rc-book {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--x-gap);
+  row-gap: 48px;
+  margin-top: var(--x-sp-section);
+  padding: var(--x-sp-close) var(--x-gutter);
+  background: var(--x-orange);
+  color: var(--x-ink);
+}
+.rc-book ::selection {
+  background: var(--x-ink);
+  color: var(--x-orange);
+}
+.rc-book :focus-visible {
+  outline: 2px solid var(--x-ink);
+  outline-offset: 4px;
+}
+.rc-book__aside {
+  grid-column: 1 / span 5;
+}
+.rc-book__title {
+  margin: 0;
+  font-weight: 800;
+  font-size: var(--x-fs-h2);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+.rc-book__title .x-dot {
+  background: var(--x-ink);
+}
+.rc-book__lead {
+  max-width: 36ch;
+  margin: 20px 0 28px;
+  font-size: var(--x-fs-body);
+  font-weight: 500;
+  line-height: 1.5;
+}
+.rc-book__mail {
+  color: var(--x-ink);
+  text-decoration: none;
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--x-fs-item);
+  background: linear-gradient(currentColor, currentColor) 0 100% / 100% 2px no-repeat;
+  padding-bottom: 4px;
+  transition: background-size 0.45s var(--x-ease);
+}
+.rc-book__mail:hover {
+  background-size: 0 2px;
+}
+.rc-book__form {
+  grid-column: 7 / -1;
+}
+
+/* Form on orange (shares chips and send pill with the Catch-us sheet). */
+.rf {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  align-items: flex-start;
+}
+.rf-topics {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.rf-topics__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.rf-label {
+  display: block;
+  margin-bottom: 10px;
+  padding: 0;
+  font-family: var(--x-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--x-fs-label);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.rf-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  width: 100%;
+}
+.rf-field {
+  display: block;
+  width: 100%;
+}
+.rf-field input,
+.rf-field textarea {
+  display: block;
+  width: 100%;
+  padding: 4px 0 8px;
+  border: 0;
+  border-bottom: 3px solid var(--x-ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--x-ink);
+  font-family: var(--x-body);
+  font-size: var(--x-fs-input);
+  font-weight: 600;
+  line-height: 1.45;
+  caret-color: var(--x-ink);
+}
+.rf-field textarea {
+  min-height: 110px;
+  font-weight: 500;
+  resize: vertical;
+}
+.rf-field input::placeholder,
+.rf-field textarea::placeholder {
+  color: rgba(11, 10, 9, 0.7);
+  opacity: 1;
+}
+.rf-field input:focus,
+.rf-field textarea:focus,
+.rf-field input:focus-visible,
+.rf-field textarea:focus-visible {
+  outline: none;
+  border-bottom-color: var(--x-paper);
+}
+.rf-consent {
+  position: relative;
+  display: flex;
+  gap: 14px;
+  max-width: 58ch;
+  font-size: var(--x-fs-small);
+  line-height: 1.5;
+  cursor: pointer;
+}
+.rf-consent input {
+  position: absolute;
+  opacity: 0;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+}
+.rf-consent__box {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  box-shadow: inset 0 0 0 2px var(--x-ink);
+  transition: background-color 0.2s ease;
+}
+.rf-consent input:checked + .rf-consent__box {
+  background: var(--x-ink);
+  box-shadow: inset 0 0 0 2px var(--x-ink), inset 0 0 0 7px var(--x-orange);
+}
+.rf-consent input:focus-visible + .rf-consent__box {
+  outline: 2px solid var(--x-ink);
+  outline-offset: 3px;
+}
+.rf-consent a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.rf-done__title {
+  margin: 0;
+  font-weight: 800;
+  font-size: var(--x-fs-h2);
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+.rf-done__title .x-dot {
+  background: var(--x-ink);
+}
+.rf-done__text {
+  max-width: 36ch;
+  margin: 18px 0 0;
+  font-size: var(--x-fs-lead);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .rc-stage {
+    min-height: 88svh;
+  }
+  .rc-paper__text,
+  .rc-paper__story,
+  .rc-book__aside,
+  .rc-book__form {
+    grid-column: 1 / -1;
+  }
+  /* Phones: a horizontal snap strip, no stagger. */
+  .rc-offers__grid {
+    display: flex;
+    gap: 14px;
+    margin-left: calc(var(--x-gutter) * -1);
+    margin-right: calc(var(--x-gutter) * -1);
+    padding: 0 var(--x-gutter) 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--x-gutter);
+    scrollbar-width: none;
+  }
+  .rc-offers__grid::-webkit-scrollbar {
+    display: none;
+  }
+  .rc-offer {
+    flex: 0 0 74vw;
+    scroll-snap-align: start;
+  }
+  .rc-offer:nth-child(even) {
+    translate: none;
+  }
+  .rc-offer__title {
+    font-size: 1rem;
+  }
+  .rf-pair {
+    grid-template-columns: 1fr;
+  }
+  .rc-paper__clip {
+    grid-column: 1 / -1;
+    justify-self: start;
+    width: min(100%, 300px);
+  }
+  .rc-wall__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 42vw;
+  }
+  .rc-wall__item--tall {
+    grid-column: 1;
+    grid-row: span 2;
+  }
+  .rc-wall__item--wide {
+    grid-column: 1 / -1;
+    grid-row: span 1;
+    order: -1;
+  }
+  .rc-wall__item--square {
+    grid-column: 2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rc-stage__photo,
+  .rc-stage__title,
+  .rc-stage__lead,
+  .rc-stage__more {
+    animation: none;
+  }
+}

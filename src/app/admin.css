@@ -1,14 +1,31 @@
+/* Admin tokens — the admin is a working tool (Operate), styled from the v5
+   inks. Muted greys are allowed here for secondary UI text only. */
+:root {
+  --bg-primary: var(--x-ink);
+  --bg-elevated: #1a1816;
+  --text-primary: var(--x-paper);
+  --text-secondary: #9a958e;
+  --text-muted: #6f6a64;
+  --accent: var(--x-orange);
+  --border: rgba(239, 235, 228, 0.08);
+  --border-hover: rgba(239, 235, 228, 0.16);
+  --font-display: var(--x-display);
+  --font-body: var(--x-body);
+  --radius-md: 12px;
+  --radius-lg: 20px;
+}
+
 /* ===========================================================================
    Admin dashboard styling.
    Scoped under .admin-shell so it never bleeds into the public site. Reuses the
-   brand design tokens (defined in legacy.css :root) for a consistent dark look.
+   admin tokens below, which map onto the v5 inks in site.css.
    =========================================================================== */
 
 .admin-shell {
   min-height: 100vh;
   background: var(--bg-primary, #0a0a0a);
   color: var(--text-primary, #f0f0f0);
-  font-family: var(--font-body, "Inter", sans-serif);
+  font-family: var(--font-body);
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -133,7 +150,7 @@
   margin-bottom: 2rem;
 }
 .admin-page-head__titles h1 {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: var(--font-display);
   font-size: clamp(1.6rem, 4vw, 2.4rem);
   font-weight: 700;
   letter-spacing: -0.03em;
@@ -158,7 +175,7 @@
   padding: 1.25rem 1.4rem;
 }
 .admin-stat__value {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: var(--font-display);
   font-size: 2.2rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -179,7 +196,7 @@
   margin-top: 2.5rem;
 }
 .admin-section__title {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: var(--font-display);
   font-size: 1.15rem;
   font-weight: 600;
   margin-bottom: 1rem;
@@ -318,7 +335,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  font-family: var(--font-body, "Inter", sans-serif);
+  font-family: var(--font-body);
   font-size: 0.85rem;
   font-weight: 600;
   padding: 0.6rem 1.1rem;
@@ -435,7 +452,7 @@
   gap: 1rem;
 }
 .admin-fieldset__legend {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: var(--font-display);
   font-weight: 600;
   font-size: 1rem;
   padding: 0 0.4rem;
@@ -523,132 +540,8 @@
   border-color: var(--accent, #ff7d00);
   color: var(--text-primary, #f0f0f0);
 }
-.admin-single-media {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-.admin-single-media__preview {
-  width: 160px;
-  aspect-ratio: 4 / 3;
-  border: 1px solid var(--border, #222);
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  flex-shrink: 0;
-}
-.admin-single-media__preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 
 /* ---- Hero manager (dashboard) ------------------------------------------- */
-.hero-admin__columns {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-.hero-admin__col {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  text-align: left;
-  background: var(--bg-elevated, #141414);
-  border: 1px solid var(--border, #222);
-  border-radius: 14px;
-  padding: 1rem;
-  cursor: pointer;
-  font-family: inherit;
-  color: inherit;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease;
-}
-.hero-admin__col:hover {
-  border-color: var(--text-muted, #888);
-}
-.hero-admin__col.is-active {
-  border-color: var(--accent, #ff7d00);
-  box-shadow: inset 0 0 0 1px var(--accent, #ff7d00);
-}
-.hero-admin__col-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-.hero-admin__col-name {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
-  font-weight: 600;
-  font-size: 1rem;
-}
-.hero-admin__col-count {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted, #888);
-}
-.hero-admin__col-previews {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  min-height: 40px;
-}
-.hero-admin__thumb {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-.hero-admin__thumb video,
-.hero-admin__thumb-empty {
-  width: 48px;
-  height: 36px;
-  border-radius: 6px;
-  object-fit: cover;
-  background: #000;
-  border: 1px solid var(--border, #222);
-  flex-shrink: 0;
-}
-.hero-admin__thumb-label {
-  font-size: 0.82rem;
-  color: var(--text-secondary, #bbb);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.hero-admin__col-edit {
-  margin-top: auto;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--accent, #ff7d00);
-}
-.hero-admin__editor {
-  margin-top: 1.25rem;
-  border: 1px solid var(--border, #222);
-  border-radius: 14px;
-  padding: 1.25rem;
-  display: grid;
-  gap: 1.1rem;
-}
-.hero-admin__editor-title {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
-  font-weight: 600;
-  font-size: 1.05rem;
-}
-.hero-admin__slide {
-  border: 1px solid var(--border, #1c1c1c);
-  border-radius: 12px;
-  padding: 1rem;
-  display: grid;
-  gap: 0.85rem;
-  background: var(--bg-primary, #0a0a0a);
-}
-.hero-admin__slide-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
 .hero-admin__actions {
   display: flex;
   align-items: center;
@@ -656,11 +549,7 @@
   flex-wrap: wrap;
   margin-top: 1.25rem;
 }
-@media (max-width: 720px) {
-  .hero-admin__columns {
-    grid-template-columns: 1fr;
-  }
-}
+/* Video-wall slot editor */
 
 /* ---- Messages ----------------------------------------------------------- */
 .admin-alert {
@@ -821,7 +710,7 @@
   padding: 2rem;
 }
 .admin-auth-wrap__brand {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: var(--font-display);
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text-primary, #f0f0f0);
@@ -837,7 +726,7 @@
   gap: 1rem;
 }
 .admin-denied h1 {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: var(--font-display);
   font-size: 1.8rem;
 }
 .admin-denied p {
@@ -951,7 +840,7 @@
   align-items: center;
 }
 .cat-manager__slug {
-  font-family: var(--font-body, "Inter", sans-serif);
+  font-family: var(--font-body);
   color: var(--text-muted, #888);
 }
 /* ---- Floating "Benachrichtigungen" button (Anfragen page) -------------- */
@@ -1147,7 +1036,7 @@
   background: var(--bg-elevated, #141414);
 }
 .admin-modal__title {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: var(--font-display);
   font-size: 1.25rem;
   margin: 0;
 }
@@ -1168,7 +1057,7 @@
   padding: 1.5rem;
 }
 .admin-modal__subtitle {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: var(--font-display);
   font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1206,7 +1095,7 @@
   gap: 0.5rem;
 }
 .admin-service-card__name {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: var(--font-display);
   font-weight: 600;
 }
 .admin-service-card__role {

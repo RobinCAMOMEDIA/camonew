@@ -78,7 +78,7 @@ export function AdminServicesButton() {
         // Access was granted, but the email invite failed (e.g. SMTP/Clerk).
         setResult({
           ok: true,
-          message: `${email.trim()} ist jetzt Admin. Einladungs-Mail konnte nicht gesendet werden (${res.message}) — die Person kann sich aber regulär registrieren.`,
+          message: `${email.trim()} ist jetzt Admin. Einladungs-Mail konnte nicht gesendet werden (${res.message}). Die Person kann sich aber regulär registrieren.`,
         });
         setEmail("");
       }
@@ -152,7 +152,7 @@ export function AdminServicesButton() {
               <p className="admin-hint" style={{ marginBottom: "0.75rem" }}>
                 Die E-Mail wird sofort freigeschaltet und bekommt eine
                 Einladungs-Mail zum Registrieren. Danach hat die Person direkt
-                Zugriff aufs Panel — ohne weitere Schritte.
+                Zugriff aufs Panel, ohne weitere Schritte.
               </p>
               <form className="admin-invite" onSubmit={handleInvite}>
                 <input

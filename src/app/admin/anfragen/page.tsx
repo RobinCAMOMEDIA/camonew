@@ -8,7 +8,7 @@ export default function AdminInquiriesPage() {
         <div className="admin-page-head__titles">
           <h1>Anfragen</h1>
           <p>
-            Kontaktanfragen von der Website — aus dem „Catch Us“-Formular und der
+            Kontaktanfragen von der Website: aus dem „Catch Us“-Formular und der
             Records-Seite.
           </p>
         </div>

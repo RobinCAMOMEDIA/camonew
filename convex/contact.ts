@@ -48,6 +48,7 @@ const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const SOURCE_LABELS: Record<string, string> = {
   overlay: "Catch Us Formular",
   records: "Catch Moments Formular",
+  home: "Startseite (Satz-Formular)",
 };
 const sourceLabel = (s: string) => SOURCE_LABELS[s] ?? s;
 

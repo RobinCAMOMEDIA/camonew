@@ -1,161 +1,266 @@
 import type { Metadata } from "next";
-import { ContactCTA } from "@/components/ContactCTA";
-import { DisciplinesStrip } from "@/components/DisciplinesStrip";
+import Link from "next/link";
+import { api } from "@convex/_generated/api";
+import { getConvexClient } from "@/lib/convexServer";
+import type { PublicCase } from "@/lib/cases";
+import { ServiceScroll, type Service, type ServiceMedia } from "@/components/leistungen/ServiceScroll";
+import { ServiceReel, type ReelItem } from "@/components/leistungen/ServiceReel";
+import { ProcessTimeline } from "@/components/leistungen/ProcessTimeline";
+import { CatchUsButton } from "@/components/site/CatchUsButton";
+import { Arrow } from "@/components/site/Arrow";
+import "./leistungen.css";
 
 export const metadata: Metadata = {
-  title: "Leistungen – CAMO Media | Hamburg",
+  title: "Leistungen | CAMO Media Hamburg",
   description:
-    "Entdecke unsere Full-Service Leistungen im Culture Marketing: Social Media Management, Content Creation, Digital Concepts & Culture Strategy.",
+    "Social Media, Content, Strategy, Websites & Apps und 3D. Für große Brands genauso wie für Restaurants, Läden und Start-ups. Culture Marketing aus Hamburg.",
 };
 
-export default function LeistungenPage() {
+// Revalidate so newly published cases show up in the work row (ISR).
+export const revalidate = 60;
+
+// Copy based on the live camo.media Leistungen/Agentur pages. The Brand and
+// Local lines describe typical jobs at each size – scenarios, not client claims.
+const SERVICES: Service[] = [
+  {
+    id: "social",
+    title: "Social",
+    lead: "Wir planen, produzieren und betreuen deine Kanäle. Mit einem Plan dahinter, nicht nur schönen Posts.",
+    offer: [
+      "Social Media Management",
+      "Redaktionsplanung",
+      "Instagram & Facebook Ads",
+      "Influencer Productions",
+      "Kampagnenplanung & Produktion",
+      "Ad-Sets & Werbestrecken",
+    ],
+    brand: "eine Kampagne über alle Kanäle, mit Creators, Ads und Redaktionsplan aus einer Hand.",
+    local: "ein Feed, der Lust macht vorbeizukommen: Posts, Stories und Ads für deine Nachbarschaft.",
+    media: { kind: "video", src: "/assets/videos/1.mp4" },
+  },
+  {
+    id: "content",
+    title: "Content",
+    lead: "Content ist die Sprache, die wir fließend sprechen. Übersetzt in die Bildsprache deiner Zielgruppe und jedes Kanals.",
+    offer: ["Videoshootings", "Fotoshootings", "Produktfotografie", "Interviews", "Firmenprofile", "Events & Festivals"],
+    brand: "ein Kampagnen-Dreh mit Artists, Set und eigener Crew.",
+    local: "ein Drehtag für Speisekarte, Team und Location.",
+    media: { kind: "video", src: "/assets/videos/5.mp4" },
+  },
+  {
+    id: "strategy",
+    title: "Strategy",
+    lead: "Wir analysieren Markt und Zielgruppe und bauen ein Konzept, das festlegt, was wann wo läuft.",
+    offer: ["Digital Strategy", "Digital Consulting", "Markt- & Zielgruppenanalyse", "Briefings & Reportings"],
+    brand: "wie eure Marke in einer Szene mitredet, statt nur reinzurufen.",
+    local: "der Weg von der Idee zur ersten eigenen Community: was, wo und wann.",
+    media: { kind: "video", src: "/assets/videos/4.mp4" },
+  },
+  {
+    id: "web",
+    title: "Web & Apps",
+    lead: "Webseiten und Apps im responsive Design. Schnell geladen, durchdacht und passend zu deinem Content.",
+    offer: ["Webseiten", "Onlineshops", "UI/UX Design", "Apps"],
+    brand: "eine Kampagnen-Microsite oder ein Shop, der aussieht wie die Kampagne.",
+    local: "eine schnelle Website mit Karte, Öffnungszeiten und allem, was Gäste suchen.",
+    media: { kind: "screen", src: "/assets/images/leistungen/web-camo-crew.jpg" },
+  },
+  {
+    id: "renderings",
+    title: "3D",
+    lead: "Wir bringen Ideen mit 3D-Renderings zum Leben, bevor es sie in echt gibt.",
+    offer: ["3D-Renderings", "Visualisierungen für Social & Kampagnen"],
+    brand: "das Produkt im Rendering, bevor der Prototyp fertig ist.",
+    local: "dein neuer Laden als 3D-Ansicht, bevor die erste Wand steht.",
+    media: { kind: "cube" },
+  },
+];
+
+// The opener reel: one tile per service, jumping to its chapter below.
+// Content shows the real CAMO set photo; the rest reuse the chapter media.
+const REEL_MEDIA: Record<string, ServiceMedia> = {
+  social: { kind: "video", src: "/assets/videos/6.mp4" },
+  content: { kind: "image", src: "/assets/images/leistungen/content.jpg", focus: "50% 45%" },
+  strategy: { kind: "video", src: "/assets/videos/3.mp4" },
+};
+
+const REEL: ReelItem[] = SERVICES.map((s) => ({
+  id: s.id,
+  title: s.title,
+  line: s.lead.split(/[.:]/)[0].trim(),
+  // Different footage than the chapters below, so the opener never repeats them.
+  media: REEL_MEDIA[s.id] ?? s.media,
+}));
+
+const SCALES = [
+  {
+    id: "brands",
+    title: "Für Brands",
+    image: "/assets/images/chacho1.jpg",
+    items: [
+      "Kampagnen & Launches über alle Kanäle",
+      "Produktionen mit Artists & Creators",
+      "Laufende Social-Betreuung mit Reporting",
+      "Microsites & Shops zur Kampagne",
+    ],
+  },
+  {
+    id: "local",
+    title: "Für Local & Start-ups",
+    image: "/assets/images/stills/local-store-event.jpg",
+    items: [
+      "Feed & Stories für Restaurant, Laden oder Location",
+      "Ein Drehtag für Karte, Team & Räume",
+      "Website mit allem, was Gäste suchen",
+      "Launch-Plan für die ersten Monate",
+    ],
+  },
+];
+
+const PROCESS = [
+  { step: "We talk", text: "Jedes Projekt beginnt mit einem ausführlichen Gespräch über dich, deine Ziele und deine Leute." },
+  { step: "We plan", text: "Unser Team steckt die Köpfe zusammen und plant, was wo läuft, inklusive Briefing für dich." },
+  { step: "We create", text: "Time to catch moments: Dreh, Schnitt, Design. Alles mit unserem eigenen Team." },
+  { step: "We ghost", text: "Spotlight auf dich. Wir posten, betreuen und optimieren aus dem Off." },
+];
+
+type WorkCase = { id: string; slug: string; client: string; title: string; image: string | null };
+
+async function getWork(): Promise<WorkCase[]> {
+  try {
+    const cases = (await getConvexClient().query(api.cases.listPublished, {})) as PublicCase[];
+    return [...cases]
+      .sort((a, b) => Number(b.featured) - Number(a.featured) || a.sortOrder - b.sortOrder)
+      .filter((c) => c.thumbnailImage?.url || c.heroImage?.url)
+      .slice(0, 8)
+      .map((c) => ({
+        id: c._id,
+        slug: c.slug,
+        client: c.client,
+        title: c.title,
+        image: c.thumbnailImage?.url ?? c.heroImage?.url ?? null,
+      }));
+  } catch {
+    return [];
+  }
+}
+
+function Dot() {
+  return <span className="x-dot" aria-hidden="true" />;
+}
+
+export default async function LeistungenPage() {
+  const work = await getWork();
+
   return (
-    <>
-      <header className="about-hero leistungen-hero">
-        <div className="about-hero__bg-decorations" aria-hidden="true">
-          <div className="about-hero__grid" />
-          <div className="about-hero__glow" />
+    <div className="le">
+      {/* ── Opener: statement + the five services as one reel ────────── */}
+      <header className="le-hero">
+        <div className="le-hero__head">
+          <h1 className="le-hero__title x-wide">
+            Was wir <span className="x-nowrap">machen<Dot /></span>
+          </h1>
+          <p className="le-hero__lead">
+            Social, Content, Strategy, Web und 3D: alles aus einem Team in
+            Hamburg. Für Weltmarken genauso wie für dein Restaurant oder
+            Start-up um die Ecke: gleicher Anspruch, nur die Größe ändert sich.
+          </p>
         </div>
-        <span className="about-hero__subtitle reveal">CAMO Media // Services</span>
-        <h1 className="about-hero__title reveal">
-          Unsere Leistungen<span className="square-dot" />
-        </h1>
+        <ServiceReel items={REEL} />
       </header>
 
-      <section className="services-intro">
-        <div className="container">
-          <div className="services-intro-grid">
-            <div className="services-intro__col reveal delay-1">
-              <h3 className="services-intro__col-title">Social Media</h3>
-              <p className="services-intro__col-text">
-                Egal, ob dein Unternehmen ein aufstrebender Newcomer oder bereits
-                etabliert ist – bei CAMO haben wir das Geheimnis der sozialen
-                Netzwerke entschlüsselt. Als kreative Marketingagentur aus
-                Hamburg haben wir bereits über 100 Unternehmen mit unserem
-                Know-how und unseren Produktionen beflügelt. Denn jedes Projekt
-                verdient eine einzigartige Herangehensweise!
-              </p>
-              <p className="services-intro__col-text">
-                Wenn du eine Strategie suchst, um mehr Kunden und Anfragen zu
-                generieren, bist du bei uns goldrichtig. Wir planen, produzieren
-                und feiern den Erfolg gemeinsam mit dir.
-              </p>
-              <ul className="services-intro__list">
-                {[
-                  "Social Media Management",
-                  "Content Creation",
-                  "Redaktionsplanung",
-                  "Facebook & Instagram Ads",
-                  "Influencer Productions",
-                  "Kampagnenplanung & Produktion",
-                  "Ad-Sets & Werbestrecken",
-                ].map((t) => (
-                  <li key={t}>{t}</li>
-                ))}
-              </ul>
-              <p className="services-intro__local">
-                <strong>#LocalHeroes</strong> — Mit unserem Programm unterstützen
-                wir lokale Unternehmen wie Restaurants, Hotels und Eventlocations
-                zu erschwinglichen Preisen. Wir haben bereits zahlreiche
-                regionale Unternehmen begleitet und sind stolz auf eine deutliche
-                Umsatzsteigerung bei über 68% von ihnen.
-              </p>
-            </div>
+      {/* ── Services: sticky scroll ────────────────────────────────── */}
+      <section className="le-services" aria-label="Unsere Leistungen">
+        <ServiceScroll services={SERVICES} />
+      </section>
 
-            <div className="services-intro__col reveal delay-2">
-              <h3 className="services-intro__col-title">Content</h3>
-              <p className="services-intro__col-text">
-                „Content“ ist die Sprache, die wir fließend beherrschen. Denn
-                ohne sie läuft heute nichts mehr. Doch was nützt es, wenn niemand
-                diese Sprache versteht? Diese Frage stellen wir uns bei jeder
-                Produktion und übersetzen die Inhalte in die Sprache deiner
-                Zielgruppe.
-              </p>
-              <p className="services-intro__col-text">
-                Jeder Kanal hat seine eigene Bildsprache und Formate, daher sind
-                unsere Briefings ein entscheidender Erfolgsfaktor. Unsere
-                Contentproduktionen passen wie maßgeschneiderte Anzüge.
-              </p>
-              <ul className="services-intro__list">
-                {[
-                  "Fotoshootings",
-                  "Videoshootings",
-                  "Produktfotografie",
-                  "Interviews",
-                  "Firmenprofile",
-                  "Events & Festivals",
-                ].map((t) => (
-                  <li key={t}>{t}</li>
+      {/* ── Same quality, different size ───────────────────────────── */}
+      <section className="le-scale" aria-labelledby="le-scale-title" data-ground="paper">
+        <h2 className="x-h2" id="le-scale-title">
+          Gleicher Anspruch. Andere <span className="x-nowrap">Größe<Dot /></span>
+        </h2>
+        <div className="le-scale__grid">
+          {SCALES.map((c) => (
+            <article key={c.id} className={`le-card le-card--${c.id}`} data-appear="">
+              <div className="le-card__media">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={c.image} alt="" loading="lazy" decoding="async" />
+              </div>
+              <h3 className="le-card__title x-wide">
+                {c.title}
+                <Dot />
+              </h3>
+              <ul className="le-card__list">
+                {c.items.map((it) => (
+                  <li key={it}>{it}</li>
                 ))}
               </ul>
-              <div className="services-intro__col-img">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/assets/images/leistungen/content.png"
-                  alt="CAMO Media - Professional video production studio setup"
-                />
-              </div>
-            </div>
-          </div>
+            </article>
+          ))}
         </div>
       </section>
 
-      <DisciplinesStrip />
-
-      <section className="services-growth">
-        <div className="container">
-          <div className="services-growth-grid">
-            <div className="services-growth__content reveal-left">
-              <div className="label">#LocalHeroes Programm</div>
-              <h2 className="services-growth__title">
-                Support für lokale Macher
-                <span className="square-dot" style={{ background: "var(--accent)" }} />
-              </h2>
-              <p className="services-growth__text">
-                Mit unserem <strong>#LocalHeroes</strong> Programm unterstützen
-                wir lokale Hamburger Unternehmen wie Restaurants, Hotels und
-                Eventlocations zu erschwinglichen Preisen. Wir haben bereits
-                zahlreiche regionale Partner bei ihren Marketingaktivitäten
-                begleitet und sind stolz darauf, dass wir für eine{" "}
-                <strong>deutliche Umsatzsteigerung bei über 68%</strong> von
-                ihnen gesorgt haben. Sprich uns einfach unverbindlich an – wir
-                beißen nicht, es sei denn, du machst wirklich großartige Burger!
-              </p>
-            </div>
-            <div className="services-growth__images reveal-right">
-              <div className="services-growth__img-wrap">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/assets/images/leistungen/growth1.png"
-                  alt="CAMO Media - Catchmoments Records vinyl and mixer gear"
-                  className="services-growth__img"
-                />
-              </div>
-              <div
-                className="services-growth__img-wrap"
-                style={{ marginTop: "2.5rem" }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/assets/images/leistungen/growth2.png"
-                  alt="CAMO Media - Behind-the-scenes video campaign production"
-                  className="services-growth__img"
-                />
-              </div>
-            </div>
+      {/* ── Selected work ──────────────────────────────────────────── */}
+      {/* Only once there is real work to show (≥3 cases with images). */}
+      {work.length >= 3 && (
+        <section className="le-work" aria-labelledby="le-work-title">
+          <div className="le-work__head">
+            <h2 className="x-h2" id="le-work-title">
+              Aus der <span className="x-nowrap">Praxis<Dot /></span>
+            </h2>
+            <Link href="/cases" className="x-more">
+              <span>Alle Cases</span>
+              <span className="x-more__dot" aria-hidden="true"><Arrow /></span>
+            </Link>
           </div>
+          <ul className="le-work__row">
+            {work.map((w) => (
+              <li key={w.id} className="le-work__item">
+                <Link href={`/cases/${w.slug}`} className="le-work__link">
+                  <div className="le-work__media">
+                    {w.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={w.image} alt="" loading="lazy" decoding="async" />
+                    ) : null}
+                  </div>
+                  <p className="le-work__client x-wide">{w.client}</p>
+                  <p className="le-work__title">{w.title}</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* ── Process ────────────────────────────────────────────────── */}
+      <section className="le-process" aria-labelledby="le-process-title">
+        <div className="le-process__aside">
+          <h2 className="x-h2" id="le-process-title">
+            So <span className="x-nowrap">läuft&apos;s<Dot /></span>
+          </h2>
+          <p className="le-process__lead">
+            Vom ersten Gespräch bis zum laufenden Kanal: vier Schritte, ein
+            Team, keine Übergaben.
+          </p>
         </div>
+        <ProcessTimeline steps={PROCESS} />
       </section>
 
-      <ContactCTA
-        tagline="Let's Create"
-        headline={
-          <>
-            Bereit für echten<br />
-            <span className="accent">kulturellen Impact</span>?
-          </>
-        }
-      />
-    </>
+      {/* ── Close ──────────────────────────────────────────────────── */}
+      <section className="le-close" aria-labelledby="le-close-title" data-ground="orange">
+        <h2 className="le-close__q x-wide" id="le-close-title">
+          Was brauchst du?
+        </h2>
+        <p className="le-close__lead">
+          Kampagne, Feed oder erster Drehtag? Erzähl uns, was ansteht.
+        </p>
+        <div className="le-close__row">
+          <CatchUsButton />
+          <a href="mailto:hello@camo.media" className="le-close__mail">
+            hello@camo.media
+          </a>
+        </div>
+      </section>
+    </div>
   );
 }

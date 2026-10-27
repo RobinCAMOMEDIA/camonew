@@ -153,7 +153,7 @@ export function MediaUploader({
           : multiple
             ? "Dateien auswählen oder hierher ziehen"
             : value.length > 0
-              ? "Ersetzen — neue Datei auswählen"
+              ? "Ersetzen: neue Datei auswählen"
               : "Datei auswählen"}
       </div>
       <input

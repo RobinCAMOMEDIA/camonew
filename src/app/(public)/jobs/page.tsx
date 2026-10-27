@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import "../legal.css";
 
 export const metadata: Metadata = {
-  title: "Jobs & Karriere – CAMO Media | Hamburg",
+  title: "Jobs & Karriere | CAMO Media Hamburg",
   description:
-    "Werde Teil von CAMO – Kreativagentur aus Hamburg. Offene Stellen, Freelance-Pool und Initiativbewerbungen an talents@camo-media.de.",
+    "Werde Teil von CAMO, der Kreativagentur aus Hamburg. Offene Stellen, Freelance-Pool und Initiativbewerbungen an talents@camo-media.de.",
 };
 
 const APPLY = "mailto:talents@camo-media.de";
@@ -12,20 +13,19 @@ export default function JobsPage() {
   return (
     <main className="jobs-page">
       <header className="legal-hero">
-        <span className="legal-hero__subtitle">CAMO Media // Karriere</span>
-        <h1 className="legal-hero__title">
-          Catch Jobs<span className="square-dot" />
+        <h1 className="x-h2">
+          Catch <span className="x-nowrap">Jobs<span className="x-dot" aria-hidden="true" /></span>
         </h1>
       </header>
 
       <section className="jobs-intro">
-        <div className="container jobs-intro__inner">
+        <div className="jobs-intro__inner">
           <p className="jobs-intro__text">
-            Wir sind CAMO, eine Kreativagentur aus Hamburg – inhabergeführt,
+            Wir sind CAMO, eine Kreativagentur aus Hamburg: inhabergeführt,
             ziemlich cool unterwegs und immer eine Prise Culture mit an Bord. Wir
             suchen immer wieder neue Member für unser Team. Für die Meisterschale
             trainieren wir hart, aber hey, das gehört dazu. Wir machen so ziemlich
-            alles im kreativen Bereich – ob für die Musikindustrie, die
+            alles im kreativen Bereich, ob für die Musikindustrie, die
             Universität in deiner Stadt oder die nächste Kampagne deiner
             Lieblings-Marke. Wir sind urban, jung, innovativ und immer auf der
             Suche nach Talents mit Herzblut. Falls du Lust auf ein Kennenlernen
@@ -35,16 +35,16 @@ export default function JobsPage() {
             <a href={APPLY} className="jobs-intro__mail">
               talents@camo-media.de
             </a>
-            <a href={`${APPLY}?subject=Bewerbung bei CAMO`} className="btn btn--primary">
-              Jetzt bewerben
-              <span className="btn__arrow">→</span>
+            <a href={`${APPLY}?subject=Bewerbung bei CAMO`} className="x-pill x-pill--light">
+              <span className="x-pill__fill" aria-hidden="true" />
+              <span className="x-pill__label">Jetzt bewerben</span>
             </a>
           </div>
         </div>
       </section>
 
       <section className="jobs-list-section">
-        <div className="container jobs-list">
+        <div className="jobs-list">
           {/* Social Media Manager */}
           <article className="job-card">
             <h2 className="job-card__title">Social Media Manager*in</h2>
@@ -163,25 +163,25 @@ export default function JobsPage() {
 
             <a
               href={`${APPLY}?subject=Bewerbung: Social Media Manager*in`}
-              className="btn btn--primary job-card__apply"
+              className="x-pill x-pill--light job-card__apply"
             >
-              Jetzt bewerben
-              <span className="btn__arrow">→</span>
+              <span className="x-pill__fill" aria-hidden="true" />
+              <span className="x-pill__label">Jetzt bewerben</span>
             </a>
           </article>
 
           {/* Freelance Pool */}
           <article className="job-card">
             <h2 className="job-card__title">
-              Freelance Pool – Wahre Talente gesucht!
+              Freelance Pool: Wahre Talente gesucht!
             </h2>
             <p className="job-card__sub">
               Hey du da! Ja, genau du mit der kreativen Ader und dem
               unerschütterlichen Talent! Wir sind CAMO Media, eine frische und
               lebhafte Agentur aus der wunderschönen Hansestadt Hamburg. Und wisst
-              ihr was? Wir glauben an wahre Talente – ohne wenn und aber! Egal, ob
+              ihr was? Wir glauben an wahre Talente, ohne wenn und aber! Egal, ob
               du Content Creator, Fotograf*in, Videograf*in oder digitale*r
-              Künstler*in bist, wir wollen dich in unserem Team haben – und das
+              Künstler*in bist, wir wollen dich in unserem Team haben, und das
               als Freelancer!
             </p>
             <p className="job-card__text">
@@ -228,7 +228,7 @@ export default function JobsPage() {
 
             <p className="job-card__outro">
               Und jetzt kommt das Beste: Bei uns bist du frei wie ein Vogel! Keine
-              Fesseln, keine Festeinstellung – du kannst als Freelancer deinen
+              Fesseln, keine Festeinstellung, du kannst als Freelancer deinen
               kreativen Geist entfalten, wann und wie es dir passt. Pack deine
               besten Arbeiten ein und schicke uns eine Mail an{" "}
               <a href={APPLY}>talents@camo-media.de</a>. Falls du ein kreatives
@@ -238,10 +238,10 @@ export default function JobsPage() {
 
             <a
               href={`${APPLY}?subject=Bewerbung: Freelance Pool`}
-              className="btn btn--primary job-card__apply"
+              className="x-pill x-pill--light job-card__apply"
             >
-              Jetzt bewerben
-              <span className="btn__arrow">→</span>
+              <span className="x-pill__fill" aria-hidden="true" />
+              <span className="x-pill__label">Jetzt bewerben</span>
             </a>
           </article>
         </div>

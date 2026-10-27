@@ -90,7 +90,7 @@ export function CategoryManager() {
           </div>
         ))}
         {items.length === 0 && (
-          <p className="admin-hint">Noch keine Kategorien — füge eine hinzu.</p>
+          <p className="admin-hint">Noch keine Kategorien. Füge eine hinzu.</p>
         )}
       </div>
       <div className="cat-manager__actions">

@@ -6,7 +6,9 @@ import { api } from "@convex/_generated/api";
 import { getConvexClient } from "@/lib/convexServer";
 import type { PublicCase } from "@/lib/cases";
 import { CATEGORY_LABELS } from "@/lib/cases";
-import { CaseVideoEmbed } from "@/components/CaseVideoEmbed";
+import { CaseVideoEmbed } from "@/components/cases/CaseVideoEmbed";
+import { Arrow } from "@/components/site/Arrow";
+import "../cases.css";
 
 // ISR: re-build a published case page at most once a minute.
 export const revalidate = 60;
@@ -42,9 +44,9 @@ export async function generateMetadata({
   const { slug } = await params;
   const c = await getCase(slug);
   if (!c) {
-    return { title: "Case nicht gefunden – CAMO Media" };
+    return { title: "Case nicht gefunden | CAMO Media" };
   }
-  const title = c.seoTitle?.trim() || `${c.title} – Cases | CAMO Media`;
+  const title = c.seoTitle?.trim() || `${c.title} | Cases | CAMO Media`;
   const description = c.seoDescription?.trim() || c.teaser;
   return {
     title,
@@ -61,12 +63,6 @@ export async function generateMetadata({
   };
 }
 
-// Map a gallery image count to the original bento layout class.
-function galleryLayoutClass(count: number) {
-  if (count >= 3 && count <= 6) return `gallery-layout-${count}`;
-  return "gallery-layout-default";
-}
-
 export default async function CaseDetailPage({
   params,
 }: {
@@ -80,174 +76,142 @@ export default async function CaseDetailPage({
     ? c.services.join(", ")
     : CATEGORY_LABELS[c.category] ?? c.category;
   const disciplines = c.disciplines.join(", ");
-  const heroStyle = c.heroImage?.url
-    ? {
-        backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.72), rgba(10, 10, 10, 0.72)), url('${c.heroImage.url}')`,
-        borderBottom: "none",
-      }
-    : undefined;
-
+  const hero = c.heroImage?.url ?? c.thumbnailImage?.url ?? null;
   const gallery = c.galleryImages.filter((g) => g.url);
+  const videos = c.videos.filter((v) => v.url);
+  const facts = [
+    { k: "Kunde", v: c.client },
+    { k: "Jahr", v: c.year },
+    { k: "Services", v: services },
+    { k: "Disziplinen", v: disciplines },
+  ].filter((f) => f.v);
 
   return (
-    <>
-      <header
-        className="about-hero cases-hero"
-        style={heroStyle}
-      >
-        <div className="about-hero__bg-decorations" aria-hidden="true">
-          <div className="about-hero__grid" />
-          <div className="about-hero__glow" />
+    <article className="cd">
+      {/* ── Hero: the case image full-bleed, title at the foot ───────── */}
+      <header className={`cd-hero${hero ? "" : " cd-hero--plain"}`}>
+        {hero && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className="cd-hero__img" src={hero} alt={c.heroImage?.alt || ""} fetchPriority="high" />
+        )}
+        <div className="cd-hero__scrim" aria-hidden="true" />
+        <div className="cd-hero__text">
+          <h1 className="cd-hero__title x-wide">
+            {c.title}
+            <span className="x-dot" aria-hidden="true" />
+          </h1>
         </div>
-        <span className="about-hero__subtitle reveal">
-          CAMO Media // Case Study
-        </span>
-        <h1 className="about-hero__title reveal">
-          {c.title}
-          <span className="square-dot" />
-        </h1>
       </header>
 
-      <section className="case-meta-section">
-        <div className="container">
-          <div className="case-meta-grid reveal">
-            <div className="case-meta-item">
-              <span className="case-meta-label">Kunde</span>
-              <span className="case-meta-value">{c.client}</span>
+      {/* ── Facts + story ─────────────────────────────────────────────── */}
+      <section className="cd-intro">
+        <dl className="cd-facts">
+          {facts.map((f) => (
+            <div key={f.k} className="cd-fact">
+              <dt>{f.k}</dt>
+              <dd>{f.v}</dd>
             </div>
-            {c.year && (
-              <div className="case-meta-item">
-                <span className="case-meta-label">Jahr</span>
-                <span className="case-meta-value">{c.year}</span>
-              </div>
-            )}
-            {services && (
-              <div className="case-meta-item">
-                <span className="case-meta-label">Services</span>
-                <span className="case-meta-value">{services}</span>
-              </div>
-            )}
-            {disciplines && (
-              <div className="case-meta-item">
-                <span className="case-meta-label">Disziplinen</span>
-                <span className="case-meta-value">{disciplines}</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section className="case-content-section">
-        <div className="container">
-          {(c.introHeadline || c.description) && (
-            <div className="case-editorial-grid reveal">
-              <div className="case-editorial-title">
-                {c.introHeadline || c.title}
-                <span
-                  className="square-dot"
-                  style={{ background: "var(--accent)" }}
-                />
-              </div>
-              <div className="case-editorial-text">
-                {c.description || c.teaser}
-              </div>
-            </div>
+          ))}
+        </dl>
+        <div className="cd-story">
+          {(c.introHeadline || c.description || c.teaser) && (
+            <>
+              {c.introHeadline && <h2 className="cd-story__head x-wide">{c.introHeadline}</h2>}
+              <p className="cd-story__lead">{c.description || c.teaser}</p>
+            </>
           )}
-
           {c.contentBlocks?.map((block, i) => {
-            if (block.type === "heading") {
+            if (block.type === "heading")
               return (
-                <h2 key={i} className="case-editorial-title" style={{ marginBottom: "var(--space-md)" }}>
+                <h2 key={i} className="cd-story__head x-wide">
                   {block.text}
                 </h2>
               );
-            }
-            if (block.type === "quote") {
+            if (block.type === "quote")
               return (
-                <blockquote key={i} className="case-editorial-text" style={{ fontStyle: "italic", marginBottom: "var(--space-lg)" }}>
+                <blockquote key={i} className="cd-story__quote">
+                  <span className="cd-story__quote-mark" aria-hidden="true" />
                   {block.text}
                 </blockquote>
               );
-            }
             return (
-              <p key={i} className="case-editorial-text" style={{ marginBottom: "var(--space-lg)" }}>
+              <p key={i} className="cd-story__p">
                 {block.text}
               </p>
             );
           })}
-
-          {gallery.length > 0 && (
-            <div className="reveal">
-              <div
-                className={`case-gallery-grid ${galleryLayoutClass(gallery.length)}`}
-              >
-                {gallery.map((img, i) => (
-                  <div className="gallery-item" key={i}>
-                    <Image
-                      src={img.url as string}
-                      alt={img.alt || `${c.title} Detail Asset ${i + 1}`}
-                      width={img.width ?? 1200}
-                      height={img.height ?? 900}
-                      loading="lazy"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </section>
 
-      {(c.videos.length > 0 || c.externalVideoEmbeds.length > 0) && (
-        <section className="case-video-section">
-          <div className="container">
-            <div className="case-video-grid reveal">
-              {c.videos
-                .filter((vid) => vid.url)
-                .map((vid, i) => (
-                  <div className="case-video-embed" key={`v-${i}`}>
-                    {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-                    <video src={vid.url as string} controls playsInline />
-                  </div>
-                ))}
-              {c.externalVideoEmbeds.map((url, i) => (
-                <CaseVideoEmbed url={url} key={`e-${i}`} />
-              ))}
+      {/* ── Film: right after the story, before the stills ──────────── */}
+      {(videos.length > 0 || c.externalVideoEmbeds.length > 0) && (
+        <section className="cd-film" aria-label="Videos">
+          {videos.map((vid, i) => (
+            <div className="cd-film__frame" key={`v-${i}`}>
+              {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+              <video
+                src={vid.url as string}
+                controls
+                playsInline
+                preload="metadata"
+                poster={hero ?? undefined}
+                controlsList="nodownload"
+                disablePictureInPicture
+              />
             </div>
-          </div>
+          ))}
+          {c.externalVideoEmbeds.map((url, i) => (
+            <CaseVideoEmbed url={url} key={`e-${i}`} />
+          ))}
         </section>
       )}
 
+      {/* ── Gallery: two per row, a lone last image runs full width ──── */}
+      {gallery.length > 0 && (
+        <section className="cd-gallery" aria-label="Bilder">
+          {gallery.map((img, i) => (
+            <figure
+              key={i}
+              className={`cd-shot${gallery.length % 2 === 1 && i === gallery.length - 1 ? " cd-shot--wide" : ""}`}
+              data-appear=""
+            >
+              <Image
+                src={img.url as string}
+                alt={img.alt || `${c.title}, Bild ${i + 1}`}
+                width={img.width ?? 1600}
+                height={img.height ?? 1200}
+                loading="lazy"
+                sizes="(max-width: 900px) 100vw, 50vw"
+              />
+            </figure>
+          ))}
+        </section>
+      )}
+
+      {/* ── Results (from the CMS only) ───────────────────────────────── */}
       {c.kpis.length > 0 && (
-        <section className="case-results-section">
-          <div className="container">
-            <div className="case-results-grid reveal">
-              {c.kpis.map((kpi, i) => (
-                <div className="case-result-item" key={i}>
-                  <div className="case-result-number">{kpi.value}</div>
-                  <div className="case-result-label">{kpi.label}</div>
-                  {kpi.description && (
-                    <div
-                      className="case-result-label"
-                      style={{ marginTop: 4, opacity: 0.7 }}
-                    >
-                      {kpi.description}
-                    </div>
-                  )}
-                </div>
-              ))}
+        <section className="cd-results" aria-label="Ergebnisse">
+          {c.kpis.map((kpi, i) => (
+            <div className="cd-result" key={i}>
+              <p className="cd-result__value x-wide">{kpi.value}</p>
+              <p className="cd-result__label">{kpi.label}</p>
+              {kpi.description && <p className="cd-result__desc">{kpi.description}</p>}
             </div>
-          </div>
+          ))}
         </section>
       )}
 
-      <Link href="/cases" className="case-next-nav">
-        <span className="case-next-nav-label">Zurück zur Übersicht</span>
-        <div className="case-next-nav-title">
-          Alle Cases ansehen <span>→</span>
-        </div>
-      </Link>
-    </>
+      {/* ── Back to all ───────────────────────────────────────────────── */}
+      <nav className="cd-next" aria-label="Weitere Cases" data-ground="orange">
+        <Link href="/cases" className="cd-next__link">
+          <span className="cd-next__q x-wide">
+            Alle <span className="x-nowrap">Cases<span className="x-dot" aria-hidden="true" /></span>
+          </span>
+          <span className="cd-next__go" aria-hidden="true">
+            <Arrow />
+          </span>
+        </Link>
+      </nav>
+    </article>
   );
 }

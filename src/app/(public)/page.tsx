@@ -1,247 +1,200 @@
 import Link from "next/link";
 import { api } from "@convex/_generated/api";
 import { getConvexClient } from "@/lib/convexServer";
-import { HeroVideoGrid, type HeroColumn } from "@/components/HeroVideoGrid";
-import { HeroScroll } from "@/components/HeroScroll";
-import { HomeContact } from "@/components/HomeContact";
+import type { PublicCase } from "@/lib/cases";
+import { HomeHero } from "@/components/home/HomeHero";
+import { HeroBend } from "@/components/home/HeroBend";
+import { HomeStory, type StoryFrame } from "@/components/home/HomeStory";
+import { Arrow } from "@/components/site/Arrow";
+import { BRANDS } from "@/lib/brands";
+import "./home.css";
 
-// Revalidate the home page periodically so newly published cases appear without
-// a redeploy (ISR). Public data only.
+// Revalidate periodically so a new showreel / newly published cases appear
+// without a redeploy (ISR). Public data only.
 export const revalidate = 60;
 
-const MARQUEE_BRANDS = [
-  ["applemusic", "Apple Music"],
-  ["warnermusic", "Warner Music"],
-  ["gshock", "G-Shock"],
-  ["hoka", "Hoka"],
-  ["zalando", "Zalando"],
-  ["faxe", "Faxe"],
-  ["verdi", "ver.di"],
-  ["kiwi", "KIWI"],
-  ["casio", "Casio"],
-  ["cbw", "CBW"],
-  ["breuning", "Breuning"],
-  ["crodo", "Crodo"],
-  ["jägermeister", "Jägermeister"],
-  ["landrover", "Land Rover"],
-  ["universal", "Universal Music"],
-  ["weiterbildunghamburg", "Weiterbildung Hamburg"],
-] as const;
+const FALLBACK_SHOWREEL = "/assets/videos/showreel.mp4";
 
-// Fallback hero used when Convex isn't reachable yet — mirrors the defaults in
-// convex/hero.ts so the grid always renders.
-const FALLBACK_HERO: { heroSubtitle: string; heroColumns: HeroColumn[] } = {
-  heroSubtitle: "BASED ON A CULTURE.",
-  heroColumns: [
-    {
-      slides: [
-        { videoUrl: "/assets/videos/1.mp4", brand: "Apple Music", type: "Social Media Campaign" },
-        { videoUrl: "/assets/videos/4.mp4", brand: "G-Shock", type: "Content Creation" },
-      ],
-    },
-    {
-      slides: [
-        { videoUrl: "/assets/videos/2.mp4", brand: "About You", type: "Influencer Marketing" },
-        { videoUrl: "/assets/videos/5.mp4", brand: "Landrover", type: "Digital Campaign" },
-      ],
-    },
-    {
-      slides: [
-        { videoUrl: "/assets/videos/3.mp4", brand: "Red Bull", type: "Event Coverage" },
-        { videoUrl: "/assets/videos/6.mp4", brand: "Nike", type: "Community Building" },
-      ],
-    },
-  ],
+
+type HomeCase = {
+  id: string;
+  slug: string;
+  client: string;
+  title: string;
+  image: string | null;
 };
 
-async function getHeroContent(): Promise<{
-  heroSubtitle: string;
-  heroColumns: HeroColumn[];
-}> {
+async function getShowreel(): Promise<string> {
   try {
     const hero = await getConvexClient().query(api.hero.getHero, {});
-    const heroColumns: HeroColumn[] = hero.heroColumns.map((col) => ({
-      slides: col.slides.map((s) => ({
-        videoUrl: s.video?.url ?? null,
-        brand: s.brand,
-        type: s.type,
-      })),
-    }));
-    return { heroSubtitle: hero.heroSubtitle, heroColumns };
+    return hero.showreel?.url ?? FALLBACK_SHOWREEL;
   } catch {
-    return FALLBACK_HERO;
+    return FALLBACK_SHOWREEL;
   }
 }
 
-export default async function HomePage() {
-  const hero = await getHeroContent();
+async function getCases(): Promise<HomeCase[]> {
+  try {
+    const cases = (await getConvexClient().query(
+      api.cases.listPublished,
+      {},
+    )) as PublicCase[];
+    return [...cases]
+      .sort(
+        (a, b) =>
+          Number(b.featured) - Number(a.featured) || a.sortOrder - b.sortOrder,
+      )
+      .slice(0, 4)
+      .map((c) => ({
+        id: c._id,
+        slug: c.slug,
+        client: c.client,
+        title: c.title,
+        image: c.thumbnailImage?.url ?? c.heroImage?.url ?? null,
+      }));
+  } catch {
+    return [];
+  }
+}
+
+// Client logos: a quiet running line of paper logos at the foot of About.
+function Logos({ className, ground = "paper" }: { className: string; ground?: string }) {
+  return (
+    <section className={className} aria-label="Kunden & Partner" data-ground={ground}>
+      <div className="xl__marquee">
+          <div className="xl__track">
+            {[...BRANDS, ...BRANDS].map(([file, alt, ar, boost = 1], i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={`${file}-${i}`}
+                src={`/assets/images/cases/${file}.png`}
+                style={{ "--s": (Math.sqrt(ar) * boost).toFixed(3) } as React.CSSProperties}
+                alt={i < BRANDS.length ? alt : ""}
+                aria-hidden={i < BRANDS.length ? undefined : true}
+                loading="lazy"
+                decoding="async"
+              />
+            ))}
+          </div>
+        </div>
+    </section>
+  );
+}
+
+// Real footage for the story frames (case photos, stills, clips).
+const STORY_FRAMES: StoryFrame[] = [
+  { src: "/assets/images/cases/lucio101-gshock.jpg" },
+  { src: "/assets/videos/1.mp4", kind: "video" },
+  { src: "/assets/images/cases/kiwi.jpg" },
+  { src: "/assets/images/cases/casio.jpg" },
+  { src: "/assets/images/records/still-open.jpg" },
+  { src: "/assets/images/cases/hoka.jpg" },
+  { src: "/assets/videos/5.mp4", kind: "video" },
+  { src: "/assets/images/cases/faxe-born-to-be-bold.jpg" },
+  { src: "/assets/images/stills/crew-backstage.jpg" },
+  { src: "/assets/images/leistungen/content.jpg" },
+];
+
+// TEMP preview: main = bending hero + story · ?v=2 the earlier dot hero
+// · ?v=4 the motion version (smooth scroll, living background, type on a drum)
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ v?: string }>;
+}) {
+  const v = Number((await searchParams).v ?? 1);
+  const [showreel, cases] = await Promise.all([getShowreel(), getCases()]);
 
   return (
-    <>
-      {/* HERO */}
-      <HeroScroll>
-      <section className="hero" id="hero">
-        <div className="hero__bg-decorations" aria-hidden="true">
-          <div className="hero__bg-grid" />
-          <div className="hero__glow hero__glow--1" />
-          <div className="hero__glow hero__glow--2" />
-          <div className="hero__watermark-vertical hero__watermark-vertical--left">
-            CULTURE
-          </div>
-          <div className="hero__watermark-vertical hero__watermark-vertical--right">
-            AGENCY
-          </div>
-        </div>
+    <div className="xhome">
+      {v === 2 ? <HomeHero src={showreel} /> : <HeroBend src={showreel} />}
 
-        <div className="hero__split">
-          <div className="hero__split-text">
-            <h1 className="hero__title">
-              Wir sind eine
-              <br />
-              <span className="accent">Culture&nbsp;Marketing</span>
-              <br />
-              Agency<span className="square-dot" aria-hidden="true" />
-            </h1>
-            <p className="hero__tagline">
-              Mehr als schöne Videos: Strategie, Content &amp; Kultur aus Hamburg
-              – aus einer Hand.
-            </p>
-          </div>
-
-          <div className="hero__split-media">
-            <HeroVideoGrid columns={hero.heroColumns} />
-          </div>
-        </div>
-
-        <div className="hero__scroll-indicator" aria-hidden="true">
-          <span className="scroll-num">01</span>
-          <div className="scroll-track">
-            <div className="scroll-bead" />
-          </div>
-          <span className="scroll-num">02</span>
-        </div>
-      </section>
-      </HeroScroll>
-
-      {/* MARQUEE */}
-      <div className="marquee" id="marquee" aria-label="Kunden und Partner">
-        <div className="marquee__track" id="marquee-track">
-          {[...MARQUEE_BRANDS, ...MARQUEE_BRANDS].map(([file, alt], i) => (
-            <div className="marquee__item" key={`${file}-${i}`}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`/assets/images/cases/${file}.png`} alt={alt} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* VORSTELLUNG — großes Statement / Zitat */}
-      <section className="statement" id="intro">
-        <div className="container statement__inner reveal">
-          <span className="statement__kicker">
-            Culture Marketing Agency — Hamburg
+      {v === 2 ? (
+      <section className="xa" aria-labelledby="xa-title">
+        <h2 className="xa__title x-h2" id="xa-title" data-appear="">
+          About{" "}
+          <span className="x-nowrap">
+            us<span className="x-dot" aria-hidden="true" />
           </span>
-          <h2 className="statement__quote">
-            Wir machen Marken zu einem{" "}
-            <span className="accent">Teil der Kultur</span>. Nicht zu Werbung
-            darin.
+        </h2>
+        <p className="xa__text" data-appear="" style={{ "--d": 120 } as React.CSSProperties}>
+          Wir sind eine Culture Marketing Agency aus Hamburg. Wir kommen aus
+          der Szene und bauen Content, Kampagnen und Strategien, die nicht nach
+          Werbung aussehen, sondern nach etwas, worüber man spricht.
+        </p>
+        <Link href="/about" className="x-more" data-appear="" style={{ "--d": 220 } as React.CSSProperties}>
+          <span>Mehr über uns</span>
+          <span className="x-more__dot" aria-hidden="true"><Arrow /></span>
+        </Link>
+        <Logos className="xl xl--foot" ground="ink" />
+      </section>
+      ) : (
+        <HomeStory frames={STORY_FRAMES}>
+          <h2 className="x-h2" id="xa-title">
+            About{" "}
+            <span className="x-nowrap">
+              us<span className="x-dot" aria-hidden="true" />
+            </span>
           </h2>
-          <p className="statement__text">
-            CAMO Media ist eine inhabergeführte Kreativagentur aus Hamburg. Wir
-            denken in Communities statt Zielgruppen – und übersetzen Marken in
-            Geschichten, die in Feeds, Clubs und auf der Straße funktionieren.
+          <p className="hs__about">
+            Wir sind eine Culture Marketing Agency aus Hamburg. Wir kommen aus
+            der Szene und bauen Content, Kampagnen und Strategien, die nicht
+            nach Werbung aussehen, sondern nach etwas, worüber man spricht.
           </p>
+          <Link href="/about" className="x-more">
+            <span>Mehr über uns</span>
+            <span className="x-more__dot" aria-hidden="true"><Arrow /></span>
+          </Link>
+        </HomeStory>
+      )}
+      {v !== 2 && <Logos className="xl xl--strip" ground="ink" />}
+
+      <section className="xc" id="work" aria-labelledby="xc-title">
+        <div className="xc__head">
+          <h2 className="x-h2" id="xc-title" data-appear="">
+            Selected <span className="x-nowrap">Cases<span className="x-dot" aria-hidden="true" /></span>
+          </h2>
+          <Link href="/cases" className="x-more">
+            <span>Alle Cases</span>
+            <span className="x-more__dot" aria-hidden="true"><Arrow /></span>
+          </Link>
         </div>
-      </section>
 
-      {/* ÜBER UNS / ANSATZ — randloses Bild, fließender Übergang */}
-      <section className="approach" id="about">
-        <div className="approach__grid">
-          <div className="approach__text reveal-left">
-            <span className="approach__label">Unser Ansatz</span>
-            <h2 className="approach__title">
-              Kultur zuerst.
-              <br />
-              Marke zweitens.
-            </h2>
-            <p className="approach__p">
-              Wir starten nicht beim Produkt, sondern bei den Menschen: ihren
-              Codes, ihrer Musik, ihren Communities. Erst wenn wir verstehen,
-              was Kultur gerade bewegt, bauen wir daraus Kommunikation, die sich
-              nicht wie Werbung anfühlt.
-            </p>
-            <p className="approach__p">
-              Das Ergebnis sind Marken, die dazugehören statt zu unterbrechen –
-              relevant, glaubwürdig und mittendrin.
-            </p>
-            <Link href="/about" className="approach__link">
-              Mehr über CAMO <span className="btn__arrow">→</span>
-            </Link>
-          </div>
-          <figure className="approach__media reveal-right" aria-hidden="true">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/assets/images/about_editorial_1.png" alt="" />
-          </figure>
-        </div>
-      </section>
-
-      {/* LEISTUNGEN + CAMO LOCAL */}
-      <section className="offer" id="services">
-        <div className="container">
-          <div className="offer__intro reveal">
-            <span className="offer__label">Was wir können</span>
-            <h2 className="offer__title">
-              Full-Service <span className="accent">Culture Marketing</span> —
-              von der Strategie bis zum letzten Frame.
-            </h2>
-          </div>
-
-          <ol className="ht-disc offer__list reveal">
-            {[
-              ["Social Media", "Strategie, Content & Community für Kanäle, die in der Kultur mitspielen."],
-              ["Content Creation", "Reels, Kampagnen-Shoots & dokumentarische Formate, die hängen bleiben."],
-              ["Digital Concepts", "Kreative Konzepte, die Kultur und Marke digital-first zusammenbringen."],
-              ["Culture Strategy", "Wir übersetzen die Codes deiner Zielgruppe in echte Kommunikation."],
-            ].map(([name, desc], i) => (
-              <li className="ht-disc__row" key={name}>
-                <span className="ht-disc__num">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="ht-disc__name">{name}</span>
-                <span className="ht-disc__desc">{desc}</span>
+        {cases.length > 0 ? (
+          <ul className="xc__grid">
+            {cases.map((c, i) => (
+              <li key={c.id} className="xc__card" data-appear="" style={{ "--d": (i % 2) * 110 } as React.CSSProperties}>
+                <Link href={`/cases/${c.slug}`} className="xc__link">
+                  <div className="xc__media">
+                    {c.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={c.image} alt="" loading="lazy" decoding="async" />
+                    ) : (
+                      <span className="xc__ph x-wide" aria-hidden="true">{c.client}</span>
+                    )}
+                    <span className="xc__arrow" aria-hidden="true"><Arrow diagonal /></span>
+                  </div>
+                  <h3 className="xc__client x-wide">
+                    {c.client}
+                    <span className="x-dot" aria-hidden="true" />
+                  </h3>
+                  <p className="xc__title">{c.title}</p>
+                </Link>
               </li>
             ))}
-          </ol>
-
-          <div className="offer__local reveal">
-            <figure className="offer__local-media">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/assets/images/leistungen/growth1.png" alt="" />
-            </figure>
-            <div className="offer__local-body">
-              <span className="offer__local-tag">CAMO Local</span>
-              <h3 className="offer__local-title">
-                Ein Programm für lokale Pioniere.
-              </h3>
-              <p className="offer__local-text">
-                Mit <strong>CAMO Local</strong> begleiten wir Indie-Brands,
-                Newcomer und lokale Pioniere mit demselben Herzblut wie globale
-                Marktführer – agile Partnerschaften statt starrer Jahresverträge.
-              </p>
-              <Link
-                href="/leistungen"
-                className="btn btn--primary offer__local-cta"
-              >
-                Alle Leistungen
-                <span className="btn__arrow">→</span>
-              </Link>
-            </div>
-          </div>
-        </div>
+          </ul>
+        ) : (
+          <p className="xc__empty">Neue Cases folgen in Kürze.</p>
+        )}
+        {v === 4 && (
+          <Link href="/cases" className="xc__all" data-curve="">
+            <span className="xc__all-text x-wide">
+              Alle Cases <span className="x-nowrap">sehen<span className="x-dot" aria-hidden="true" /></span>
+            </span>
+            <span className="xc__all-go" aria-hidden="true"><Arrow size={18} /></span>
+          </Link>
+        )}
       </section>
-
-      {/* KONTAKT — Finale */}
-      <HomeContact />
-    </>
+    </div>
   );
 }

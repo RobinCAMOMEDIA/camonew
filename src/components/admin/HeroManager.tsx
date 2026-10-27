@@ -6,11 +6,6 @@ import { api } from "@convex/_generated/api";
 import type { MediaRef } from "@/lib/media";
 import { MediaUploader } from "@/components/admin/MediaUploader";
 
-// Local editable shapes. A slide keeps its video as a MediaRef[] (0 or 1) so we
-// can reuse the single-file MediaUploader directly.
-type SlideState = { video: MediaRef[]; brand: string; type: string };
-type ColumnState = { slides: SlideState[] };
-
 // Strip nulls / extra keys so a ref matches mediaRefValidator exactly.
 function cleanRef(ref: MediaRef): MediaRef {
   const out: MediaRef = { kind: ref.kind };
@@ -22,87 +17,37 @@ function cleanRef(ref: MediaRef): MediaRef {
   return out;
 }
 
-// Manage the home hero: three columns side by side, click one to edit its
-// videos and labels. Persists the whole config via hero.updateHero.
+// Manage the home hero: ONE full-bleed showreel video. The headline/claim is
+// part of the design, so there are no text fields here.
 export function HeroManager() {
   const data = useQuery(api.hero.getHeroAdmin);
-  const updateHero = useMutation(api.hero.updateHero);
+  const updateShowreel = useMutation(api.hero.updateShowreel);
 
-  const [subtitle, setSubtitle] = useState("");
-  const [columns, setColumns] = useState<ColumnState[]>([]);
-  const [active, setActive] = useState<number | null>(null);
+  const [video, setVideo] = useState<MediaRef[]>([]);
+  const [isDefault, setIsDefault] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
   const initialized = useRef(false);
 
-  // Seed local state from the server once the query resolves.
   useEffect(() => {
     if (!data || initialized.current) return;
     initialized.current = true;
-    setSubtitle(data.heroSubtitle ?? "");
-    setColumns(
-      data.heroColumns.map((col) => ({
-        slides: col.slides.map((s) => ({
-          video: s.video ? [s.video as MediaRef] : [],
-          brand: s.brand,
-          type: s.type,
-        })),
-      })),
-    );
+    setIsDefault(data.showreel.isDefault);
+    // Only preload the uploader with a real upload, not the bundled placeholder.
+    setVideo(data.showreel.isDefault ? [] : [data.showreel as MediaRef]);
   }, [data]);
 
-  function patchSlide(ci: number, si: number, patch: Partial<SlideState>) {
-    setSaved(false);
-    setColumns((prev) =>
-      prev.map((col, c) =>
-        c !== ci
-          ? col
-          : {
-              slides: col.slides.map((s, i) =>
-                i !== si ? s : { ...s, ...patch },
-              ),
-            },
-      ),
-    );
-  }
-
-  function addSlide(ci: number) {
-    setSaved(false);
-    setColumns((prev) =>
-      prev.map((col, c) =>
-        c !== ci
-          ? col
-          : { slides: [...col.slides, { video: [], brand: "", type: "" }] },
-      ),
-    );
-  }
-
-  function removeSlide(ci: number, si: number) {
-    setSaved(false);
-    setColumns((prev) =>
-      prev.map((col, c) =>
-        c !== ci ? col : { slides: col.slides.filter((_, i) => i !== si) },
-      ),
-    );
-  }
-
-  async function handleSave() {
+  async function save(next: MediaRef[]) {
     setError("");
     setSaving(true);
     try {
       // MediaRef.storageId is a plain string (storage-agnostic); the Convex
       // validator expects the branded Id<"_storage">. Assert at this boundary.
-      await updateHero({
-        heroSubtitle: subtitle.trim() || undefined,
-        heroColumns: columns.map((col) => ({
-          slides: col.slides.map((s) => ({
-            video: s.video[0] ? cleanRef(s.video[0]) : undefined,
-            brand: s.brand.trim(),
-            type: s.type.trim(),
-          })),
-        })),
-      } as Parameters<typeof updateHero>[0]);
+      await updateShowreel({
+        showreel: next[0] ? cleanRef(next[0]) : undefined,
+      } as Parameters<typeof updateShowreel>[0]);
+      setIsDefault(!next[0]);
       setSaved(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Speichern fehlgeschlagen.");
@@ -112,143 +57,62 @@ export function HeroManager() {
   }
 
   if (data === undefined) {
-    return <div className="admin-hint">Lade Hero-Inhalte…</div>;
+    return <div className="admin-hint">Lade Showreel…</div>;
   }
 
   return (
     <div className="hero-admin">
       {error && <div className="admin-alert admin-alert--error">{error}</div>}
 
-      <div className="admin-field admin-field--full" style={{ marginBottom: "1.25rem" }}>
-        <label className="admin-label" htmlFor="hero-subtitle">
-          Subtitle (über dem Video-Grid)
-        </label>
-        <input
-          id="hero-subtitle"
-          className="admin-input"
-          value={subtitle}
-          onChange={(e) => {
-            setSaved(false);
-            setSubtitle(e.target.value);
-          }}
-          placeholder="z. B. BASED ON A CULTURE."
-        />
-      </div>
+      <p className="admin-hint" style={{ marginBottom: "1rem" }}>
+        Das Showreel läuft stumm in Vollbild ganz oben auf der Startseite und
+        öffnet sich mit Ton über „Showreel ansehen". Querformat (16:9) sieht am
+        besten aus. Für schnelle Ladezeiten das Video vorher komprimieren
+        (ideal: unter ~20&nbsp;MB).
+      </p>
 
-      {/* Three columns side by side — click one to edit it. */}
-      <div className="hero-admin__columns">
-        {columns.map((col, ci) => (
-          <button
-            type="button"
-            key={ci}
-            className={`hero-admin__col${active === ci ? " is-active" : ""}`}
-            onClick={() => setActive(ci)}
-          >
-            <div className="hero-admin__col-head">
-              <span className="hero-admin__col-name">Spalte {ci + 1}</span>
-              <span className="hero-admin__col-count">
-                {col.slides.length} {col.slides.length === 1 ? "Video" : "Videos"}
-              </span>
-            </div>
-            <div className="hero-admin__col-previews">
-              {col.slides.length === 0 && (
-                <span className="admin-hint">Keine Videos</span>
-              )}
-              {col.slides.map((s, si) => (
-                <div className="hero-admin__thumb" key={si}>
-                  {s.video[0]?.url ? (
-                    // eslint-disable-next-line jsx-a11y/media-has-caption
-                    <video src={s.video[0].url} muted />
-                  ) : (
-                    <div className="hero-admin__thumb-empty" />
-                  )}
-                  <span className="hero-admin__thumb-label">
-                    {s.brand || "— ohne Titel —"}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <span className="hero-admin__col-edit">
-              {active === ci ? "Wird bearbeitet" : "Bearbeiten →"}
-            </span>
-          </button>
-        ))}
-      </div>
-
-      {/* Editor for the selected column */}
-      {active !== null && columns[active] && (
-        <div className="hero-admin__editor">
-          <h3 className="hero-admin__editor-title">
-            Spalte {active + 1} bearbeiten
-          </h3>
-          {columns[active].slides.map((slide, si) => (
-            <div className="hero-admin__slide" key={si}>
-              <div className="hero-admin__slide-head">
-                <span className="admin-label">Video {si + 1}</span>
-                <button
-                  type="button"
-                  className="admin-btn admin-btn--sm admin-btn--danger"
-                  onClick={() => removeSlide(active, si)}
-                >
-                  Entfernen
-                </button>
-              </div>
-              <MediaUploader
-                label="Video"
-                accept="video"
-                value={slide.video}
-                onChange={(refs) => patchSlide(active, si, { video: refs })}
-                hint="MP4, WebM, MOV (max 100 MB)."
-              />
-              <div className="admin-form-grid">
-                <div className="admin-field">
-                  <label className="admin-label">Titel</label>
-                  <input
-                    className="admin-input"
-                    value={slide.brand}
-                    onChange={(e) =>
-                      patchSlide(active, si, { brand: e.target.value })
-                    }
-                    placeholder="z. B. Apple Music"
-                  />
-                </div>
-                <div className="admin-field">
-                  <label className="admin-label">Text</label>
-                  <input
-                    className="admin-input"
-                    value={slide.type}
-                    onChange={(e) =>
-                      patchSlide(active, si, { type: e.target.value })
-                    }
-                    placeholder="z. B. Social Media Campaign"
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
-          <button
-            type="button"
-            className="admin-btn admin-btn--sm"
-            onClick={() => addSlide(active)}
-          >
-            + Video hinzufügen
-          </button>
-        </div>
+      {isDefault && (
+        <p className="admin-hint" style={{ marginBottom: "1rem" }}>
+          Aktuell läuft noch das <strong>Platzhalter-Video</strong>. Lade euer
+          eigenes Showreel hoch, um es zu ersetzen.
+        </p>
       )}
 
-      <div className="hero-admin__actions">
+      <MediaUploader
+        label="Showreel-Video"
+        accept="video"
+        value={video}
+        onChange={(refs) => {
+          setSaved(false);
+          setVideo(refs);
+        }}
+        hint="MP4, WebM, MOV (max 100 MB)."
+      />
+
+      <div className="hero-admin__actions" style={{ marginTop: "1.25rem" }}>
         <button
           type="button"
           className="admin-btn admin-btn--primary"
-          onClick={handleSave}
+          onClick={() => save(video)}
           disabled={saving}
         >
-          {saving ? "Speichere…" : "Hero speichern"}
+          {saving ? "Speichere…" : "Showreel speichern"}
         </button>
+        {!isDefault && (
+          <button
+            type="button"
+            className="admin-btn admin-btn--sm"
+            onClick={() => {
+              setVideo([]);
+              save([]);
+            }}
+            disabled={saving}
+          >
+            Auf Platzhalter zurücksetzen
+          </button>
+        )}
         {saved && (
-          <span className="admin-alert admin-alert--success">
-            Gespeichert.
-          </span>
+          <span className="admin-alert admin-alert--success">Gespeichert.</span>
         )}
       </div>
     </div>

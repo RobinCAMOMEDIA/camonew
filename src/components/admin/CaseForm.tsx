@@ -198,7 +198,7 @@ export function CaseForm({ initial }: { initial?: PublicCase }) {
               placeholder="wird automatisch aus dem Titel erzeugt"
             />
             <span className="admin-hint">
-              /cases/<strong>{previewSlug || "…"}</strong> — automatisch aus dem
+              /cases/<strong>{previewSlug || "…"}</strong>, automatisch aus dem
               Titel, manuell überschreibbar.
             </span>
           </div>
