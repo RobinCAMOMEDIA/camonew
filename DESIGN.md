@@ -208,7 +208,7 @@ The system is completely flat. There are no drop shadows, no glass and no layere
 
 All forms are hard rectangles with 0 radius: media frames, the orange squares, the toggle, the menu trigger and the cursor. The square is the brand geometry and comes in three sizes: a type-relative stop (0.17–0.55em), an interface square (42–56px) and the cursor (10px at rest, 46px on hover). A hollow square (2px orange outline) is the variant used when a second marker must differ from the first, as in Brand (solid) versus Local (hollow).
 
-The single exception is the pill (999px), reserved for the scrolled nav bar and the Catch-us buttons. Even inside a pill, the hover seed is a square.
+The single exception is the pill (999px), reserved for the Catch-us buttons in the pages and the consent buttons; the nav has no pill. Even inside a pill, the hover seed is a square.
 
 Media frames use fixed aspect ratios: 3:4 or 4:5 portraits, 16:9 or 2:1 landscape clips, and a 16:10 crew wall. Footage is always cropped with `object-fit: cover` and is never rounded.
 
@@ -219,14 +219,14 @@ Two pill-shaped actions carry "Catch us", and both open the contact overlay.
 - **Shape:** full pill (999px).
 - **Catch-us button (large):** ink fill, paper text, expanded 800 uppercase at 16px, padding 22px 36px 22px 60px. An orange 12px square sits in the left padding.
 - **Hover / Focus:** the square scales up (about 40×) and floods the pill. On an orange close it floods paper, and the text turns ink. Focus is a 2px ink outline offset by 4px.
-- **Nav Catch-us:** the same construction at 13px (padding 13px 20px 13px 38px) with a 10px seed. The seed floods orange on hover. The pill takes the ink fill once the page scrolls.
+- **Nav Catch-us:** set exactly like the nav links (expanded 700 uppercase, 12px) with a 7px orange square in front. Hover rolls the letters like the links. Clicking it drops the orange Catch-us sheet down from the top edge like a blind; closing rolls it back up.
 
 ### More link
 - **Style:** the secondary action. A square-cornered frame (2px inset outline in currentColor, padding 16px 20px 15px 22px) holding an expanded 800 uppercase label at 13px and an orange drawn arrow.
 - **Hover / Focus:** orange wipes in from the left (clip-path), the text and arrow turn ink and the arrow nudges 4px right. Nothing rotates (the owner disliked the earlier tipping square).
 
 ### Navigation
-- **Desktop (Stack nav):** the CAMO wordmark (a paper mask, orange on hover) with the links stacked beneath it in expanded 700 uppercase at 14px. The active link is orange. Hovering rolls the label up and slides an orange twin in. Once scrolled, the stack becomes one row inside an ink pill (padding 10px 26px 10px 22px), and the links drop to 12px.
+- **Desktop (Gleiter nav):** the CAMO wordmark top left, the four links in one row top centre and Catch us top right, all floating straight on the page with no plate or pill, also when scrolled. Links are expanded 700 uppercase at 12px. An orange block glides to the current page and rests behind it (the label turns ink). Hovering rolls the letters up one after another and brings them back in orange.
 - **Mobile (≤900px):** the wordmark plus a 54px orange square labelled MENÜ. The square opens a fullscreen orange menu that wipes in as a circle from the tap point, with the link words set in display 900.
 - **Focus:** a 2px orange outline offset by 4px on every nav control.
 
@@ -269,7 +269,8 @@ Hard-edged footage on an ink-well underlay. Clips are muted, autoplaying and dec
 
 ### Motion grammar
 - **Easing:** expo-out (cubic-bezier(0.19, 1, 0.22, 1)) for most movement and ease-in-out (cubic-bezier(0.76, 0, 0.24, 1)) for wipes and unfolds. Durations run 0.5–0.9s.
-- **Shared, ambient motion:** an intro in which the orange square scales to fill the screen and wipes up once per session; lines rising out of a mask at the first viewport; sections appearing with a 30px rise; and the nav label roll.
+- **Shared, ambient motion:** an intro in which the orange square scales to fill the screen and wipes up once per session; lines rising out of a mask at the first viewport; sections appearing with a 30px rise; and the nav letter roll.
+- **Motion layer (VibeLayer, every page):** Lenis smooth scrolling; a living ink background with a slow, soft orange glow and a subtle static grain (background layer only); titles, leads and appearing elements tilt slightly as if on a drum while they scroll (case cards excepted); pages arrive out of a soft blur. Reduced motion turns all of it off.
 - **Authored moment, one per surface:** home, the hero video contracting into the CAMO square on scroll; /about, the name opening up: CA over MO (pinned) with orange "tch" and "ments" wiping in, then the lead; /leistungen, the sticky frame cross-fading from service to service as the text scrolls past (the opener reel widens on hover as interaction, not as a second scroll moment); /records, the live video hero and the turning stamp; /cases, the staggered frames rising in; the Catch-us sheet, growing as a square from the click point.
 - **Cursor:** a 10px orange square that follows the pointer through the CSS `translate` property, never `transform`, because the `scale` property would otherwise scale its position as well. It turns ink over orange grounds (`data-ground="orange"`).
 - **Reduced motion:** every one of these has a static fallback, either in CSS or by checking `matchMedia` in JS.

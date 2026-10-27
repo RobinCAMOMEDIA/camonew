@@ -27,17 +27,8 @@ const SOCIALS = [
   { href: "https://www.linkedin.com/company/camomedia/", label: "LinkedIn" },
 ];
 
-
-// Hover roll: the word (or, in the ?v=4 preview, each letter one after
-// another) rolls up and comes back in orange.
-function RollLabel({ text, chars }: { text: string; chars: boolean }) {
-  if (!chars) {
-    return (
-      <span className="cn-roll" data-text={text}>
-        <span>{text}</span>
-      </span>
-    );
-  }
+// Hover roll: the letters roll up one after another and come back in orange.
+function RollLabel({ text }: { text: string }) {
   return (
     <span className="cn-chars">
       <span className="x-sr">{text}</span>
@@ -58,13 +49,6 @@ export function SiteNav() {
   const pathname = usePathname();
   const { open: openContact } = useContactOverlay();
   const [scrolled, setScrolled] = useState(false);
-  // ?v=4 motion preview: nav labels roll letter by letter
-  const [chars, setChars] = useState(false);
-  useEffect(() => {
-    const v = new URLSearchParams(window.location.search).get("v");
-    setChars(v === "4" || (!v && sessionStorage.getItem("camo-vibe") === "1"));
-  }, [pathname]);
-
   // the orange block glides to the current page
   const stackRef = useRef<HTMLElement>(null);
   const glideTo = useCallback((link: HTMLElement | null) => {
@@ -89,7 +73,7 @@ export function SiteNav() {
       window.clearTimeout(t);
       window.removeEventListener("resize", glideHome);
     };
-  }, [pathname, chars, glideHome]);
+  }, [pathname, glideHome]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [origin, setOrigin] = useState({ x: "100%", y: "0%" });
   const dotRef = useRef<HTMLButtonElement>(null);
@@ -150,7 +134,7 @@ export function SiteNav() {
                 className={`cn__link${isActive(pathname, l.href) ? " is-active" : ""}`}
                 style={{ "--i": i } as React.CSSProperties}
               >
-                <RollLabel text={l.label} chars={chars} />
+                <RollLabel text={l.label} />
               </Link>
             ))}
           </nav>
@@ -159,7 +143,7 @@ export function SiteNav() {
         <button type="button" className="cn-catch" onClick={openContact}>
           <span className="cn-catch__fill" aria-hidden="true" />
           <span className="cn-catch__label">
-            <RollLabel text="Catch us" chars={chars} />
+            <RollLabel text="Catch us" />
           </span>
         </button>
 

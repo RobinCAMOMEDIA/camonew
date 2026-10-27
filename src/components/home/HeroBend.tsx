@@ -105,7 +105,7 @@ export function HeroBend({
       const r = el.getBoundingClientRect();
       const run = Math.max(el.offsetHeight - vh, 1);
       target = clamp(-r.top / run);
-      // with the ?v=4 smooth scroll the page already glides: follow closer
+      // with the smooth scroll the page already glides: follow closer
       ps += (target - ps) * (document.documentElement.classList.contains("vibe") ? 0.3 : 0.085);
       if (Math.abs(target - ps) < 0.0004) ps = target;
       const p = ps;

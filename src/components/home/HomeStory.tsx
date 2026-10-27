@@ -52,7 +52,7 @@ export function HomeStory({
       else raf = requestAnimationFrame(update);
       const p = ps;
       el.style.setProperty("--hs", p.toFixed(4));
-      // entrance before the pin (motion preview): 0 until the stage is a
+      // entrance before the pin (with the motion layer): 0 until the stage is a
       // quarter screen away, 1 once it locks; by then the hero has left
       const pre = clamp(1 - r.top / (window.innerHeight * 0.25));
       el.style.setProperty("--hs-in", (pre * pre * (3 - 2 * pre)).toFixed(3));

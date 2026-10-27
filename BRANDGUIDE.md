@@ -22,6 +22,7 @@ Dieser Guide ist eine verbindliche Vorgabe für jede neue Section, jede neue Sei
 
 - **Kein grauer Text.** Text ist entweder Paper, Ink oder Orange.
 - Keine weiteren Farben, keine Verläufe als Deko, keine grauen Flächen und keine Karten-Hintergründe.
+- **Einzige Ausnahme:** der lebende Seiten-Hintergrund (`VibeLayer`): Ink mit langsam wanderndem, weichem Orange-Glühen und dezentem, statischem Grain. Er liegt ganz hinten, nie auf Bildern oder Text.
 - Auf Orange gilt: Text, Punkte und Markierung sind Ink, die Textauswahl ist Ink auf Orange. Dazu bekommt die Section `data-ground="orange"`; dann färbt sich der Cursor und `.x-dot` automatisch.
 - Farben stehen nie hart im Code, immer als `var(--x-…)`.
 
@@ -73,7 +74,7 @@ Andere Größen gibt es nicht. In Seiten-CSS steht immer ein Token.
 ## 4. Form
 
 - **Alles ist eckig** (Radius 0): Bilder, Marker, Buttons-Seeds, Chips, Cursor.
-- **Die Pill** (`--x-pill`) gibt es nur für die Nav-Leiste, die Catch-us-Buttons und die Consent-Buttons.
+- **Die Pill** (`--x-pill`) gibt es nur für die Catch-us-Buttons in den Seiten und die Consent-Buttons. Die Nav hat keine Pill.
 - **Der Punkt ist ein Quadrat:** Jede Überschrift endet mit `<span className="x-dot" />`, nie mit einem getippten „.“. Das letzte Wort und der Punkt stehen zusammen in `<span className="x-nowrap">`.
 - **Keine Schlagschatten.** Erlaubt sind nur Konturen mit `inset`. Einzige dokumentierte Ausnahme: das Screen-Fenster auf /leistungen.
 - **Pfeile:** immer die Komponente `<Arrow />` (diagonal für externe Links). Nie getippte Zeichen wie → ↗ ✓.
@@ -107,6 +108,7 @@ Erst nehmen, was es schon gibt; nur bauen, was fehlt.
 ## 7. Bewegung
 
 - Pro Seite gibt es **einen** besonderen Moment, z. B. Hero-Video, Sticky-Frame oder Stempel. Alles andere erscheint nur: `data-appear` gibt 30px Aufstieg.
+- Darüber liegt auf jeder Seite die Motion-Ebene (`VibeLayer`): weiches Scrollen (Lenis), Titel, Leads und `[data-appear]` kippen beim Scrollen leicht wie auf einer Trommel, Seiten kommen weich aus einer Unschärfe. Case-Karten kippen nicht. Nav-Links rollen beim Hover Buchstabe für Buchstabe.
 - Easing: `var(--x-ease)` für Bewegung, `var(--x-ease-io)` für Wipes. Dauer 0.5–0.9s.
 - Jede Animation hat einen Ruhezustand unter `@media (prefers-reduced-motion: reduce)`.
 - Animiert werden nur `transform`, `opacity`, `clip-path`, `scale` und `translate`. Nie `width`, `height`, `margin` oder `top`.

@@ -5,12 +5,11 @@ import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 
 // ---------------------------------------------------------------------------
-// VIBE LAYER (TEMP preview, ?v=4): the motion world of the site.
+// VIBE LAYER: the motion world of the site.
 // · inertial smooth scrolling (Lenis, expo ease)
 // · a slow, living glow behind every page (WebGL, low-res → soft) with a
 //   static film grain on that background layer only
 // · type and frames sit on a drum: they tilt in from below and away at the top
-// ?v=4 switches it on for the session, any other ?v= switches it off.
 // Reduced motion: none of it, the plain site stays.
 // ---------------------------------------------------------------------------
 
@@ -41,18 +40,10 @@ export function VibeLayer() {
   const bgRef = useRef<HTMLCanvasElement>(null);
   const lenisRef = useRef<Lenis | null>(null);
 
-  // session switch
+  // on for everyone, except with reduced motion
   useEffect(() => {
-    try {
-      const v = new URLSearchParams(window.location.search).get("v");
-      if (v === "4") sessionStorage.setItem("camo-vibe", "1");
-      else if (v) sessionStorage.removeItem("camo-vibe");
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      setOn(sessionStorage.getItem("camo-vibe") === "1" && !reduce);
-    } catch {
-      setOn(false);
-    }
-  }, [pathname]);
+    setOn(!window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("vibe", on);

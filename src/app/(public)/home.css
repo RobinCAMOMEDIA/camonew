@@ -1,7 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   HOME v5 — one continuous, type-led flow instead of boxed sections:
-   hero (video → dot) · drift lines · statement · case index · disciplines ·
-   clients · sentence contact. Shared tokens/chrome live in site.css.
+   HOME: bending showreel hero · pinned About story · client logos ·
+   selected cases. Shared tokens and chrome live in site.css.
    ═══════════════════════════════════════════════════════════════════════ */
 
 .xhome {
@@ -16,61 +15,7 @@
   color: var(--x-orange);
 }
 
-/* ── Hero: video → dot ─────────────────────────────────────────────────── */
-.xh {
-  position: relative;
-  height: 100vh;
-  height: 100svh;
-  background: var(--x-ink);
-}
-.xh.is-live {
-  /* shorter pin → "About us" follows right after the claim */
-  height: 200vh;
-}
-.xh__stage {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100svh;
-  overflow: hidden;
-}
-.xh__video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  /* contracts into a centred square (the CAMO dot) while scrolling */
-  clip-path: inset(var(--xh-iy, 0px) var(--xh-ix, 0px));
-  will-change: clip-path;
-}
-.xh__shade {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(11, 10, 9, 0.45) 0%,
-    rgba(11, 10, 9, 0) 26%,
-    rgba(11, 10, 9, 0) 48%,
-    rgba(11, 10, 9, 0.8) 100%
-  );
-  opacity: var(--xh-title, 1);
-}
-.xh__title {
-  position: absolute;
-  left: var(--x-gutter);
-  bottom: clamp(18px, 4vh, 44px);
-  margin: 0;
-  font-weight: 900;
-  font-size: clamp(2.1rem, 5vw, 5.4rem);
-  line-height: 0.9;
-  letter-spacing: -0.03em;
-  color: var(--x-paper);
-  opacity: var(--xh-title, 1);
-  transform: translateY(calc((1 - var(--xh-title, 1)) * -70px));
-}
+/* ── Title line reveal (hero headline) ─────────────────────────────── */
 .xh__line {
   display: block;
   overflow: hidden;
@@ -89,101 +34,7 @@
   }
 }
 
-/* Ring of text around the dot + the claim either side of it */
-.xh__ring {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: calc(var(--xh-rend, 120px) * 2.75);
-  height: calc(var(--xh-rend, 120px) * 2.75);
-  margin: calc(var(--xh-rend, 120px) * -1.375) 0 0
-    calc(var(--xh-rend, 120px) * -1.375);
-  overflow: visible;
-  opacity: var(--xh-t, 0);
-  pointer-events: none;
-}
-.xh__ring text {
-  font-family: var(--x-mono);
-  font-size: 8.4px;
-  letter-spacing: 0.08em;
-  fill: var(--x-paper);
-}
-.xh__side {
-  position: absolute;
-  top: 50%;
-  margin: 0;
-  font-size: clamp(1.2rem, 2.3vw, 3rem);
-  line-height: 0.95;
-  letter-spacing: -0.02em;
-  opacity: var(--xh-t, 0);
-  pointer-events: none;
-}
-.xh__side--l {
-  right: calc(50% + var(--xh-rend, 120px) * 1.55);
-  text-align: right;
-  font-family: var(--x-display);
-  font-stretch: 125%;
-  font-variation-settings: "wdth" 125;
-  font-weight: 800;
-  text-transform: uppercase;
-  transform: translate(calc((1 - var(--xh-t, 0)) * -60px), -50%);
-}
-.xh__side--r {
-  left: calc(50% + var(--xh-rend, 120px) * 1.55);
-  font-family: var(--x-display);
-  font-stretch: 125%;
-  font-variation-settings: "wdth" 125;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: var(--x-orange);
-  transform: translate(calc((1 - var(--xh-t, 0)) * 60px), -50%);
-}
-
-/* ── About: centred title + mono paragraph ───────────────────────────── */
-.xa {
-  /* Its own screen, like the claim above it: one section in view at a time. */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  min-height: 100svh;
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  padding: var(--x-sp-section) var(--x-gutter);
-  text-align: center;
-}
-.xa__title {
-  margin-bottom: clamp(24px, 2.6vw, 36px);
-}
-.xa__text {
-  max-width: 34ch;
-  margin: 0;
-  font-size: var(--x-fs-lead-lg);
-  font-weight: 500;
-  line-height: 1.45;
-  letter-spacing: -0.01em;
-  color: var(--x-paper);
-}
-.xa .x-more {
-  margin-top: clamp(36px, 3.6vw, 52px);
-}
-
 /* ── Clients marquee ─────────────────────────────────────────────────── */
-/* Inside the orange close, ink logos at its foot */
-/* ── Clients marquee ─────────────────────────────────────────────────── */
-/* A quiet line of paper logos along the foot of the About screen */
-.xl--foot {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: clamp(28px, 4vh, 48px);
-}
-.xl--foot .xl__track img {
-  --k: clamp(30px, 3vw, 44px);
-  opacity: 0.9;
-}
 .xl__marquee {
   overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
@@ -320,27 +171,6 @@
     scale: 1;
     width: 44px;
     height: 44px;
-  }
-}
-
-/* ── Mobile tweaks ────────────────────────────────────────────────────── */
-@media (max-width: 700px) {
-  .xh__side--l,
-  .xh__side--r {
-    left: 0;
-    right: 0;
-    text-align: center;
-    transform: none;
-  }
-  .xh__side--l {
-    top: auto;
-    bottom: calc(50% + var(--xh-rend, 120px) * 1.5);
-  }
-  .xh__side--r {
-    top: calc(50% + var(--xh-rend, 120px) * 1.45);
-  }
-  .xh__title {
-    bottom: 28px;
   }
 }
 

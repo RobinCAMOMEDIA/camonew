@@ -319,30 +319,6 @@ html:not(.intro-play) .intro,
 }
 
 /* Hover text-roll: label slides up, an orange twin slides in. */
-.cn-roll {
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-  line-height: 1.15;
-  vertical-align: bottom;
-}
-.cn-roll > span {
-  display: inline-block;
-  transition: transform 0.5s var(--x-ease);
-}
-.cn-roll::after {
-  content: attr(data-text);
-  position: absolute;
-  left: 0;
-  top: 100%;
-  color: var(--x-orange);
-  white-space: nowrap;
-  transition: transform 0.5s var(--x-ease);
-}
-a:hover > .cn-roll > span,
-a:hover > .cn-roll::after {
-  transform: translateY(-100%);
-}
 
 /* Logo left · links in one row top centre · Catch us right */
 .cn__left {
@@ -380,7 +356,7 @@ a:hover > .cn-roll::after {
 }
 /* the current page sits on the orange block, in ink */
 .cn__link.is-active,
-.cn__link.is-active :is(.cn-roll, .cn-ch)::after {
+.cn__link.is-active .cn-ch::after {
   color: var(--x-ink);
 }
 .cn-glide {
@@ -1434,9 +1410,9 @@ a:hover > .cn-roll::after {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   MOTION PREVIEW (?v=4, html.vibe): smooth scroll, a living glow behind
-   every page, type on a drum, letter rolls and soft page entrances.
-   Set by VibeLayer; reduced motion never gets the class.
+   MOTION (html.vibe): smooth scroll, a living glow behind every page,
+   type on a drum and soft page entrances. Set by VibeLayer; reduced
+   motion never gets the class.
    ═══════════════════════════════════════════════════════════════════════ */
 html.lenis,
 html.lenis body {
@@ -1561,7 +1537,7 @@ a:hover .cn-ch::after {
   background-size: 256px 256px;
 }
 
-.cn-catch:hover :is(.cn-roll, .cn-ch) > span,
-.cn-catch:hover :is(.cn-roll, .cn-ch)::after {
+.cn-catch:hover .cn-ch > span,
+.cn-catch:hover .cn-ch::after {
   transform: translateY(-100%);
 }

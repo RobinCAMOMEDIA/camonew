@@ -2,7 +2,6 @@ import Link from "next/link";
 import { api } from "@convex/_generated/api";
 import { getConvexClient } from "@/lib/convexServer";
 import type { PublicCase } from "@/lib/cases";
-import { HomeHero } from "@/components/home/HomeHero";
 import { HeroBend } from "@/components/home/HeroBend";
 import { HomeStory, type StoryFrame } from "@/components/home/HomeStory";
 import { Arrow } from "@/components/site/Arrow";
@@ -95,59 +94,31 @@ const STORY_FRAMES: StoryFrame[] = [
   { src: "/assets/images/leistungen/content.jpg" },
 ];
 
-// TEMP preview: main = bending hero + story · ?v=2 the earlier dot hero
-// · ?v=4 the motion version (smooth scroll, living background, type on a drum)
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ v?: string }>;
-}) {
-  const v = Number((await searchParams).v ?? 1);
+export default async function HomePage() {
   const [showreel, cases] = await Promise.all([getShowreel(), getCases()]);
 
   return (
     <div className="xhome">
-      {v === 2 ? <HomeHero src={showreel} /> : <HeroBend src={showreel} />}
+      <HeroBend src={showreel} />
 
-      {v === 2 ? (
-      <section className="xa" aria-labelledby="xa-title">
-        <h2 className="xa__title x-h2" id="xa-title" data-appear="">
+      <HomeStory frames={STORY_FRAMES}>
+        <h2 className="x-h2" id="xa-title">
           About{" "}
           <span className="x-nowrap">
             us<span className="x-dot" aria-hidden="true" />
           </span>
         </h2>
-        <p className="xa__text" data-appear="" style={{ "--d": 120 } as React.CSSProperties}>
+        <p className="hs__about">
           Wir sind eine Culture Marketing Agency aus Hamburg. Wir kommen aus
-          der Szene und bauen Content, Kampagnen und Strategien, die nicht nach
-          Werbung aussehen, sondern nach etwas, worüber man spricht.
+          der Szene und bauen Content, Kampagnen und Strategien, die nicht
+          nach Werbung aussehen, sondern nach etwas, worüber man spricht.
         </p>
-        <Link href="/about" className="x-more" data-appear="" style={{ "--d": 220 } as React.CSSProperties}>
+        <Link href="/about" className="x-more">
           <span>Mehr über uns</span>
           <span className="x-more__dot" aria-hidden="true"><Arrow /></span>
         </Link>
-        <Logos className="xl xl--foot" ground="ink" />
-      </section>
-      ) : (
-        <HomeStory frames={STORY_FRAMES}>
-          <h2 className="x-h2" id="xa-title">
-            About{" "}
-            <span className="x-nowrap">
-              us<span className="x-dot" aria-hidden="true" />
-            </span>
-          </h2>
-          <p className="hs__about">
-            Wir sind eine Culture Marketing Agency aus Hamburg. Wir kommen aus
-            der Szene und bauen Content, Kampagnen und Strategien, die nicht
-            nach Werbung aussehen, sondern nach etwas, worüber man spricht.
-          </p>
-          <Link href="/about" className="x-more">
-            <span>Mehr über uns</span>
-            <span className="x-more__dot" aria-hidden="true"><Arrow /></span>
-          </Link>
-        </HomeStory>
-      )}
-      {v !== 2 && <Logos className="xl xl--strip" ground="ink" />}
+      </HomeStory>
+      <Logos className="xl xl--strip" ground="ink" />
 
       <section className="xc" id="work" aria-labelledby="xc-title">
         <div className="xc__head">
@@ -186,14 +157,12 @@ export default async function HomePage({
         ) : (
           <p className="xc__empty">Neue Cases folgen in Kürze.</p>
         )}
-        {v === 4 && (
-          <Link href="/cases" className="xc__all" data-curve="">
-            <span className="xc__all-text x-wide">
-              Alle Cases <span className="x-nowrap">sehen<span className="x-dot" aria-hidden="true" /></span>
-            </span>
-            <span className="xc__all-go" aria-hidden="true"><Arrow size={18} /></span>
-          </Link>
-        )}
+        <Link href="/cases" className="xc__all" data-curve="">
+          <span className="xc__all-text x-wide">
+            Alle Cases <span className="x-nowrap">sehen<span className="x-dot" aria-hidden="true" /></span>
+          </span>
+          <span className="xc__all-go" aria-hidden="true"><Arrow size={18} /></span>
+        </Link>
       </section>
     </div>
   );
