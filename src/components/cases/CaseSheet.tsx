@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { PublicCase } from "@/lib/cases";
 import { CATEGORY_LABELS } from "@/lib/cases";
@@ -8,9 +8,9 @@ import { Arrow } from "@/components/site/Arrow";
 
 // ---------------------------------------------------------------------------
 // CASE SHEET — the cases overview. Two large frames per row (the right column
-// steps down, like a staggered contact sheet). Filter chips come from the
-// CMS-managed categories (admin order), limited to those present in the
-// published cases. Everything shown is CMS data.
+// steps down, like a staggered contact sheet). Above it, centred, the filter
+// row: All plus every CMS-managed category (admin order). Like the nav, an
+// orange block glides to the active filter. Everything shown is CMS data.
 // ---------------------------------------------------------------------------
 
 type Category = { value: string; label: string };
@@ -24,15 +24,28 @@ export function CaseSheet({
 }) {
   const [active, setActive] = useState("all");
 
-  const filters = useMemo(() => {
-    const present = new Set(cases.map((c) => c.category));
-    const configured = categories.map((c) => c.value).filter((v) => present.has(v));
-    const extras = [...present].filter((c) => !configured.includes(c)).sort();
-    return ["all", ...configured, ...extras];
-  }, [cases, categories]);
+  const filters = ["all", ...categories.map((c) => c.value)];
+
+  // the orange block glides to the active filter
+  const rowRef = useRef<HTMLDivElement>(null);
+  const glide = useCallback(() => {
+    const row = rowRef.current;
+    const btn = row?.querySelector<HTMLElement>('[aria-pressed="true"]');
+    if (!row || !btn) return;
+    row.style.setProperty("--fx", `${btn.offsetLeft}px`);
+    row.style.setProperty("--fy", `${btn.offsetTop}px`);
+    row.style.setProperty("--fw", `${btn.offsetWidth}`);
+    row.style.setProperty("--fh", `${btn.offsetHeight}`);
+  }, []);
+  useEffect(() => {
+    glide();
+    document.fonts?.ready.then(glide);
+    window.addEventListener("resize", glide);
+    return () => window.removeEventListener("resize", glide);
+  }, [active, glide]);
 
   const labelFor = (key: string) => {
-    if (key === "all") return "Alle";
+    if (key === "all") return "All";
     const cfg = categories.find((c) => c.value === key);
     return cfg?.label ?? CATEGORY_LABELS[key] ?? key;
   };
@@ -41,8 +54,9 @@ export function CaseSheet({
 
   return (
     <>
-      {filters.length > 2 && (
-        <div className="cs-filter" role="group" aria-label="Cases filtern">
+      {filters.length > 1 && (
+        <div ref={rowRef} className="cs-filter" role="group" aria-label="Cases filtern">
+          <span className="cs-filter__glide" aria-hidden="true" />
           {filters.map((f) => (
             <button
               key={f}
@@ -51,7 +65,6 @@ export function CaseSheet({
               aria-pressed={active === f}
               onClick={() => setActive(f)}
             >
-              <span className="cs-chip__mark" aria-hidden="true" />
               {labelFor(f)}
             </button>
           ))}
@@ -95,7 +108,9 @@ export function CaseSheet({
           })}
         </ul>
       ) : (
-        <p className="cs-empty">Neue Cases folgen in Kürze.</p>
+        <p className="cs-empty">
+          {active === "all" ? "Neue Cases folgen in Kürze." : `Unter ${labelFor(active)} folgen bald Cases.`}
+        </p>
       )}
     </>
   );

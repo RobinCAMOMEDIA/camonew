@@ -300,6 +300,7 @@ html:not(.intro-play) .intro,
 }
 
 .cn-logo {
+  position: relative;
   display: block;
   color: inherit;
   padding: 4px 0;
@@ -396,56 +397,50 @@ html:not(.intro-play) .intro,
   margin-top: -3.5px;
   background: var(--x-orange);
 }
-/* The dot — mobile menu trigger */
+/* Mobile menu trigger: the burger (paper, ink while the menu is open) */
 .cn-dot {
   display: none;
   position: relative;
   z-index: 2;
-  width: 54px;
-  height: 54px;
   flex: none;
   place-items: center;
-  background: var(--x-orange) !important;
-  color: var(--x-ink) !important;
-  transition: transform 0.45s var(--x-ease), background-color 0.3s ease,
-    color 0.3s ease;
-  animation: cn-pop 0.6s var(--x-ease)
-    calc(var(--intro-delay) + 0.1s) both;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 4px !important;
+  color: var(--x-paper) !important;
+  animation: cn-fade 0.6s var(--x-ease) calc(var(--intro-delay) + 0.1s) both;
 }
-/* Open state: a drawn ink cross instead of a word. */
-.cn-dot__x {
+/* Burger: two lines; open, they swing into a cross */
+.cn-burger {
   position: relative;
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 14px;
 }
-.cn-dot__x span {
+.cn-burger span {
   position: absolute;
   left: 0;
-  top: 50%;
   width: 100%;
-  height: 2.5px;
-  margin-top: -1.25px;
+  height: 2px;
   background: currentColor;
-  transform: rotate(45deg);
+  transition: transform 0.45s var(--x-ease);
 }
-.cn-dot__x span + span {
-  transform: rotate(-45deg);
+.cn-burger span:first-child {
+  top: 2px;
 }
-.cn-dot__label {
-  font-family: var(--x-display);
-  font-stretch: 125%;
-  font-variation-settings: "wdth" 125;
-  font-weight: 800;
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+.cn-burger span:last-child {
+  top: 10px;
+}
+.cn.is-menu .cn-burger span:first-child {
+  transform: translateY(4px) rotate(45deg);
+}
+.cn.is-menu .cn-burger span:last-child {
+  transform: translateY(-4px) rotate(-45deg);
 }
 .cn.is-menu {
   color: var(--x-ink);
 }
 .cn.is-menu .cn-dot {
-  background: var(--x-ink) !important;
-  color: var(--x-orange) !important;
+  color: var(--x-ink) !important;
 }
 .cn.is-menu .cn__stack,
 .cn.is-menu .cn-catch {
@@ -462,11 +457,6 @@ html:not(.intro-play) .intro,
     transform: translateY(-10px);
   }
 }
-@keyframes cn-pop {
-  from {
-    transform: scale(0);
-  }
-}
 
 /* ── Fullscreen menu (mobile) ─────────────────────────────────────────── */
 .cn-menu {
@@ -480,8 +470,8 @@ html:not(.intro-play) .intro,
   padding: 110px var(--x-gutter) 28px;
   background: var(--x-orange);
   color: var(--x-ink);
-  /* grows as a square out of the menu dot (the brand shape, not a circle) */
-  clip-path: inset(var(--my, 0%) calc(100% - var(--mx, 100%)) calc(100% - var(--my, 0%)) var(--mx, 100%));
+  /* drops down from the top edge like a blind, rolls back up on close */
+  clip-path: inset(0 0 100% 0);
   visibility: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -576,10 +566,6 @@ html:not(.intro-play) .intro,
   .cn__stack,
   .cn-catch {
     display: none !important;
-  }
-  /* keep the logo readable over content once the page scrolls */
-  .cn.is-scrolled:not(.is-menu) {
-    background: var(--x-ink);
   }
   .cn-logo__mark,
   .cn.is-scrolled .cn-logo__mark {
@@ -1541,3 +1527,24 @@ a:hover .cn-ch::after {
 .cn-catch:hover .cn-ch::after {
   transform: translateY(-100%);
 }
+
+/* ── Scroll progress: replaces the native scrollbar on the public site ── */
+html:has(.x-progress) {
+  scrollbar-width: none;
+}
+html:has(.x-progress)::-webkit-scrollbar {
+  display: none;
+}
+.x-progress {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  height: 2px;
+  background: var(--x-orange);
+  transform: scaleX(var(--p, 0));
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+

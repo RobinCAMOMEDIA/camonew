@@ -32,7 +32,7 @@ void main(){
 }`;
 
 const CURVE_SEL = ".x-h2, .x-lead, [data-appear], [data-curve]";
-const CURVE_SKIP = "header, footer, [role='dialog'], .hb, .hs, .xc__card, .cto, .consent";
+const CURVE_SKIP = "header, footer, [role='dialog'], .hb, .hs, .xc__card, .ab, .cto, .consent";
 
 export function VibeLayer() {
   const pathname = usePathname();

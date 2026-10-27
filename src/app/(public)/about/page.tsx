@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { NameSplit } from "@/components/about/NameSplit";
 import { CatchUsButton } from "@/components/site/CatchUsButton";
 import { Clip } from "@/components/site/Clip";
+import { BRANDS } from "@/lib/brands";
 import "./about.css";
 
 export const metadata: Metadata = {
@@ -10,34 +10,21 @@ export const metadata: Metadata = {
     "CAMO steht für Catch Moments. Wer wir sind, woher wir kommen und warum wir alles selbst machen. Culture Marketing Agency aus Hamburg.",
 };
 
-// What stands behind the agency. Facts from the owner's own copy on /records;
-// no invented dates or sequence, no photos that could pass for the founder.
-const ROUTE = [
-  {
-    title: "Hip-Hop seit 2002",
-    text: "Bei uns gab die Musik den Rhythmus vor. Alles andere kam mit ihr.",
-    image: "/assets/images/records/still-floor.jpg",
-    focus: "50% 40%",
-  },
-  {
-    title: "Bühne & Studio",
-    text: "Über 100 Liveshows, Festivals, Songs und Brand-Kooperationen. Mit Mortel & Sido, Bonez MC, Haftbefehl, Nimo und OG Keemo.",
-    image: "/assets/images/musichero.jpg",
-    focus: "45% 50%",
-  },
-  {
-    title: "Catchmoments Records",
-    text: "Unser Label mit eigenem Studio in Hamburg, von der Song-Idee bis zum Mastering.",
-    image: "/assets/images/catchmomentsrecords.png",
-    focus: "50% 50%",
-    stamp: true,
-  },
-  {
-    title: "CAMO Media",
-    text: "Die Agentur: Strategie, Content und Social aus einem Team, für Brands und für Läden um die Ecke.",
-    image: "/assets/images/leistungen/content.jpg",
-    focus: "50% 45%",
-  },
+// ---------------------------------------------------------------------------
+// ABOUT — a plain, readable agency page, no scroll-driven staging:
+// photo opener · one sentence with a swapping word · where we come from
+// (founder + facts) · everything in-house · what we believe (paper band) ·
+// crew · who we work with · orange close.
+// Facts come from the owner's own copy (see /records); nothing invented.
+// ---------------------------------------------------------------------------
+
+// The word that keeps changing in the statement (CSS cycles through them).
+const PLACES = ["in die Szene", "auf die Bühne", "in den Feed", "auf die Straße"];
+
+const FACTS = [
+  { value: "2002", text: "Hip-Hop gab den Rhythmus vor, seitdem sind wir dabei." },
+  { value: "20+", text: "Jahre Musikindustrie hinter unserem Gründer Ufuk Karatag." },
+  { value: "100+", text: "Liveshows, dazu Festivals, Songs und Brand-Kooperationen." },
 ];
 
 const IN_HOUSE = [
@@ -47,6 +34,11 @@ const IN_HOUSE = [
   { step: "Social", text: "Posten, betreuen, auswerten und weiterdrehen.", video: "/assets/videos/4.mp4" },
 ];
 
+const BELIEFS = [
+  { title: "Echt statt laut", text: "Menschen folgen Szenen, Artists und Creators, nicht Marken. Also reden wir wie die Szene, nicht wie Werbung." },
+  { title: "Szene vor Reichweite", text: "Lieber die richtigen tausend Leute als eine Million, denen es egal ist." },
+  { title: "Momente statt Masse", text: "Ein Moment, über den man spricht, schlägt zehn Posts, die keiner merkt." },
+];
 
 // Crew wall: real behind-the-scenes material until the team photos arrive.
 const CREW = [
@@ -60,61 +52,70 @@ function Dot() {
   return <span className="x-dot" aria-hidden="true" />;
 }
 
-
 export default function AboutPage() {
   return (
     <div className="ab">
-      {/* ── The name opens up ─────────────────────────────────────── */}
-      <NameSplit
-        image="/assets/images/about/storefront.jpg"
-        imageAlt="Das CAMO-Schild wird über dem Eingang in der Wrangelstraße montiert"
-        lead="Das ist unser Name und unser Job: die Momente einfangen, die eine Szene ausmachen, und Marken zu einem Teil davon machen." />
-
-      {/* ── What we believe ───────────────────────────────────────── */}
-      <section className="ab-belief" aria-labelledby="ab-belief-title">
-        <div className="ab-belief__text">
-          <h2 className="x-h2" id="ab-belief-title" data-appear="">
-            Kultur kann man nicht <span className="x-nowrap">kaufen<Dot /></span>
-          </h2>
-          <p className="ab-belief__lead" data-appear="" style={{ "--d": 120 } as React.CSSProperties}>
-            Menschen folgen Szenen, Artists und Creators, nicht Marken. Wer da
-            mitreden will, muss Teil davon sein, nicht Werbung darin. Genau
-            da kommen wir her.
+      {/* ── Opener: the storefront, the name ──────────────────────── */}
+      <header className="ab-open">
+        <div className="ab-open__text">
+          <h1 className="ab-open__title x-wide">
+            Catch <span className="x-nowrap">Moments<Dot /></span>
+          </h1>
+          <p className="ab-open__lead">
+            Dafür steht CAMO. Das ist unser Name und unser Job: die Momente
+            einfangen, die eine Szene ausmachen, und Marken zu einem Teil
+            davon machen. Aus Hamburg, aus der Szene.
           </p>
         </div>
-        <figure className="ab-belief__media" data-appear="">
+        <figure className="ab-open__media">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/images/records/still-open.jpg" alt="Tanzfläche beim Musikvideo-Dreh" loading="lazy" decoding="async" />
+          <img
+            src="/assets/images/about/storefront.jpg"
+            alt="Das CAMO-Schild wird über dem Eingang in der Wrangelstraße montiert"
+            decoding="async"
+          />
         </figure>
+      </header>
+
+      {/* ── One sentence, one swapping word ───────────────────────── */}
+      <section className="ab-say" aria-label="Was wir tun">
+        <p className="ab-say__text x-wide" data-appear="">
+          Wir bringen Marken{" "}
+          <span className="ab-say__swap" aria-hidden="true">
+            {PLACES.map((p, i) => (
+              <span key={p} style={{ "--k": i } as React.CSSProperties}>{p}</span>
+            ))}
+          </span>
+          <span className="x-sr">{PLACES.join(", ")}</span>
+          <br />
+          und nicht nur in die <span className="x-nowrap">Werbepause<Dot /></span>
+        </p>
       </section>
 
-      {/* ── The founder's way ─────────────────────────────────────── */}
-      <section className="ab-route" aria-labelledby="ab-route-title">
-        <div className="ab-route__head">
-          <h2 className="x-h2" id="ab-route-title" data-appear="">
-            Was dahinter <span className="x-nowrap">steckt<Dot /></span>
+      {/* ── Where we come from ────────────────────────────────────── */}
+      <section className="ab-root" aria-labelledby="ab-root-title">
+        <div className="ab-root__head">
+          <h2 className="x-h2" id="ab-root-title" data-appear="">
+            Aus der Musik <span className="x-nowrap">gewachsen<Dot /></span>
           </h2>
-          <p className="ab-route__by" data-appear="" style={{ "--d": 120 } as React.CSSProperties}>
-            <span className="ab-mark" aria-hidden="true" />
-            <strong>Ufuk Karatag</strong>, Gründer, seit über 20 Jahren in der
-            Musikindustrie. Aus dieser Leidenschaft ist alles Weitere entstanden.
+          <p className="ab-root__lead" data-appear="" style={{ "--d": 120 } as React.CSSProperties}>
+            Bei uns gab die Musik den Rhythmus vor und brachte alles andere mit.
+            Aus Liveshows wurde ein Label mit eigenem Studio, Catchmoments
+            Records, und daraus die Agentur: Strategie, Content und Social aus
+            einem Team.
           </p>
         </div>
-        <ol className="ab-route__list">
-          {ROUTE.map((r, i) => (
-            <li key={r.title} className="ab-stop" data-appear="" style={{ "--d": i * 90 } as React.CSSProperties}>
-              <h3 className="ab-stop__title x-wide">
-                {r.title}
-                <Dot />
-              </h3>
-              <p className="ab-stop__text">{r.text}</p>
-              <div className={`ab-stop__media${r.stamp ? " ab-stop__media--stamp" : ""}`}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={r.image} alt="" loading="lazy" decoding="async" style={{ objectPosition: r.focus }} />
-              </div>
+        <ul className="ab-facts">
+          {FACTS.map((f, i) => (
+            <li key={f.value} className="ab-fact" data-appear="" style={{ "--d": i * 100 } as React.CSSProperties}>
+              <span className="ab-fact__value x-wide">{f.value}</span>
+              <span className="ab-fact__text">{f.text}</span>
             </li>
           ))}
-        </ol>
+        </ul>
+        <p className="ab-root__acts" data-appear="">
+          Gearbeitet mit Mortel &amp; Sido, Bonez MC, Haftbefehl, Nimo und OG Keemo.
+        </p>
       </section>
 
       {/* ── Everything in-house ───────────────────────────────────── */}
@@ -144,13 +145,22 @@ export default function AboutPage() {
         </ol>
       </section>
 
-      {/* ── Convictions: one composed statement on the paper band ───── */}
-      <section className="ab-beliefs" data-ground="paper" aria-label="Woran wir glauben">
-        <p className="ab-beliefs__say x-wide">
-          <span className="ab-beliefs__line" data-appear="">Echt statt <span className="x-nowrap">laut<Dot /></span></span>
-          <span className="ab-beliefs__line ab-beliefs__line--in" data-appear="" style={{ "--d": 120 } as React.CSSProperties}>Szene vor <span className="x-nowrap">Reichweite<Dot /></span></span>
-          <span className="ab-beliefs__line" data-appear="" style={{ "--d": 240 } as React.CSSProperties}>Momente statt <span className="x-nowrap">Masse<Dot /></span></span>
-        </p>
+      {/* ── What we believe: the one paper band ───────────────────── */}
+      <section className="ab-believe" data-ground="paper" aria-labelledby="ab-believe-title">
+        <h2 className="x-h2" id="ab-believe-title" data-appear="">
+          Woran wir <span className="x-nowrap">glauben<Dot /></span>
+        </h2>
+        <ul className="ab-believe__list">
+          {BELIEFS.map((b, i) => (
+            <li key={b.title} className="ab-belief" data-appear="" style={{ "--d": i * 100 } as React.CSSProperties}>
+              <h3 className="ab-belief__title x-wide">
+                {b.title}
+                <Dot />
+              </h3>
+              <p className="ab-belief__text">{b.text}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
       {/* ── The crew ──────────────────────────────────────────────── */}
@@ -174,6 +184,27 @@ export default function AboutPage() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={c.src} alt={c.alt} loading="lazy" decoding="async" />
               )}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* ── Who we work with ──────────────────────────────────────── */}
+      <section className="ab-clients" aria-labelledby="ab-clients-title">
+        <h2 className="x-h2" id="ab-clients-title" data-appear="">
+          Mit wem wir <span className="x-nowrap">arbeiten<Dot /></span>
+        </h2>
+        <ul className="ab-clients__grid">
+          {BRANDS.map(([file, alt, ar, boost = 1]) => (
+            <li key={file} className="ab-clients__item">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`/assets/images/cases/${file}.png`}
+                alt={alt}
+                style={{ "--s": (Math.sqrt(ar) * boost).toFixed(3) } as React.CSSProperties}
+                loading="lazy"
+                decoding="async"
+              />
             </li>
           ))}
         </ul>

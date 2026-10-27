@@ -11,8 +11,8 @@ import { useContactOverlay } from "@/components/contact/ContactOverlay";
 // Desktop: logo top left, the links in one row top centre, Catch us top
 // right, all set alike and floating straight on the page. An orange block
 // glides to the current page; on hover the letters roll up and come back in
-// orange. Below 900px: logo + orange dot → fullscreen menu that grows out
-// of the dot.
+// orange. Below 900px: logo + a two-line burger that turns into a cross →
+// an orange fullscreen menu that drops down from the top edge.
 // ---------------------------------------------------------------------------
 
 const LINKS = [
@@ -75,8 +75,6 @@ export function SiteNav() {
     };
   }, [pathname, glideHome]);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [origin, setOrigin] = useState({ x: "100%", y: "0%" });
-  const dotRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
@@ -99,15 +97,8 @@ export function SiteNav() {
     };
   }, [menuOpen]);
 
-  // The menu bursts out of the dot that opened it.
-  const toggleMenu = useCallback(() => {
-    const btn = dotRef.current;
-    if (btn) {
-      const r = btn.getBoundingClientRect();
-      setOrigin({ x: `${r.left + r.width / 2}px`, y: `${r.top + r.height / 2}px` });
-    }
-    setMenuOpen((o) => !o);
-  }, []);
+  // The menu drops down from the top edge like a blind.
+  const toggleMenu = useCallback(() => setMenuOpen((o) => !o), []);
 
   const contact = () => {
     setMenuOpen(false);
@@ -147,9 +138,8 @@ export function SiteNav() {
           </span>
         </button>
 
-        {/* Mobile: menu dot */}
+        {/* Mobile: burger (two lines), a cross while open */}
         <button
-          ref={dotRef}
           type="button"
           className="cn-dot"
           aria-expanded={menuOpen}
@@ -157,22 +147,18 @@ export function SiteNav() {
           aria-label={menuOpen ? "Menü schließen" : "Menü öffnen"}
           onClick={toggleMenu}
         >
-          {menuOpen ? (
-            <span className="cn-dot__x" aria-hidden="true">
-              <span />
-              <span />
-            </span>
-          ) : (
-            <span className="cn-dot__label">Menü</span>
-          )}
+          {/* two lines that turn into a cross while the menu is open */}
+          <span className="cn-burger" aria-hidden="true">
+            <span />
+            <span />
+          </span>
         </button>
       </header>
 
-      {/* Fullscreen menu (orange) — a square grows from the dot. */}
+      {/* Fullscreen menu (orange), drops down from the top edge. */}
       <div
         id="cn-menu"
         className={`cn-menu${menuOpen ? " is-open" : ""}`}
-        style={{ "--mx": origin.x, "--my": origin.y } as React.CSSProperties}
         aria-hidden={!menuOpen}
         inert={!menuOpen}
       >

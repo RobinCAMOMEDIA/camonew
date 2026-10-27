@@ -309,7 +309,7 @@
   background: var(--x-ink);
 }
 .hb.is-live {
-  height: 340vh;
+  height: 420vh;
 }
 .hb__stage {
   position: sticky;

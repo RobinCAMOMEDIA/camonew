@@ -85,47 +85,48 @@
 
 /* Filter chips: square markers, ink/paper. */
 .cs-filter {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: var(--x-sp-head);
+  justify-content: center;
+  gap: 4px;
+  margin: 0 auto var(--x-sp-head);
   animation: cs-rise 0.9s var(--x-ease) calc(var(--intro-delay, 0s) + 0.35s) both;
 }
+/* orange block that glides to the active filter (sizes set in JS) */
+.cs-filter__glide {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  background: var(--x-orange);
+  transform-origin: 0 0;
+  transform: translate(var(--fx, 0), var(--fy, 0)) scale(var(--fw, 0), var(--fh, 0));
+  transition: transform 0.55s var(--x-ease);
+}
 .cs-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 16px 10px 14px;
-  border: 2px solid rgba(239, 235, 228, 0.3);
-  background: transparent;
+  position: relative;
+  z-index: 1;
+  padding: 12px 18px;
+  border: 0;
+  background: none;
   color: var(--x-paper);
   font-family: var(--x-display);
   font-stretch: 125%;
   font-variation-settings: "wdth" 125;
-  font-weight: 800;
+  font-weight: 700;
   font-size: var(--x-fs-label);
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: border-color 0.25s ease, background-color 0.25s ease, color 0.25s ease;
-}
-.cs-chip__mark {
-  width: 9px;
-  height: 9px;
-  box-shadow: inset 0 0 0 2px var(--x-orange);
-  transition: background-color 0.25s ease;
+  transition: color 0.35s ease;
 }
 .cs-chip:hover {
-  border-color: var(--x-paper);
+  color: var(--x-orange);
 }
 .cs-chip[aria-pressed="true"] {
-  border-color: var(--x-paper);
-  background: var(--x-paper);
   color: var(--x-ink);
-}
-.cs-chip[aria-pressed="true"] .cs-chip__mark {
-  background: var(--x-orange);
-  box-shadow: none;
 }
 .cs-chip:focus-visible {
   outline: 2px solid var(--x-orange);
@@ -238,6 +239,7 @@
 }
 .cs-empty {
   padding: 40px 0 80px;
+  text-align: center;
   font-size: var(--x-fs-lead-lg);
   font-weight: 500;
 }

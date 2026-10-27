@@ -5,6 +5,7 @@ import { IntroDot } from "@/components/site/IntroDot";
 import { AppearObserver } from "@/components/site/AppearObserver";
 import { SiteCursor } from "@/components/site/SiteCursor";
 import { VibeLayer } from "@/components/site/VibeLayer";
+import { ScrollProgress } from "@/components/site/ScrollProgress";
 import { ContactOverlayProvider } from "@/components/contact/ContactOverlay";
 
 // Shared chrome for every public-facing page: intro dot, grain overlay, nav,
@@ -24,6 +25,7 @@ export default function PublicLayout({
       <SiteNav />
       {children}
       <SiteFooter />
+      <ScrollProgress />
       <SiteCursor />
       <AppearObserver />
     </ContactOverlayProvider>

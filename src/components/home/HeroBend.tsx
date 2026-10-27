@@ -117,7 +117,8 @@ export function HeroBend({
       // 3 · panel opens up again, letterbox bands + claim wipe in
       const a3 = ease(clamp((p - 0.38) / 0.24));
       // 4 · out
-      const out = ease(clamp((p - 0.7) / 0.2));
+      // the claim holds from .62 to .76 before the screen swings out
+      const out = ease(clamp((p - 0.76) / 0.16));
       const shrinkW = small ? 0.14 : 0.3, shrinkH = small ? 0.5 : 0.34;
       // the panel keeps its shrunk width; only the height opens for the bands
       const W = vw * (1 - shrinkW * a1);
